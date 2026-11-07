@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controle de Pedidos · Estribos</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --azul:#1d4ed8; --azul-esc:#1e3a8a;
+    --cinza:#64748b; --borda:#cbd5e1;
+    --bg:#eef2f7; --card:#fff;
+    --vermelho:#dc2626; --verde:#15803d; --amarelo:#f59e0b;
+  }
+  body{
+    font-family:"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--bg); color:#0f172a; padding-bottom:40px;
+  }
+
+  /* ---------- TOPO / ABAS ---------- */
+  .topo{background:var(--azul-esc);color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .topo-inner{max-width:1100px;margin:0 auto;padding:10px 16px 0}
+  .topo h1{font-size:18px;font-weight:600;letter-spacing:.3px;margin-bottom:10px}
+  .tabs{display:flex;gap:6px}
+  .tab-btn{
+    background:rgba(255,255,255,.12);color:#dbeafe;border:none;
+    padding:10px 18px;border-radius:8px 8px 0 0;cursor:pointer;
+    font-size:14px;font-weight:600;transition:.15s;
+  }
+  .tab-btn:hover{background:rgba(255,255,255,.22)}
+  .tab-btn.active{background:var(--bg);color:var(--azul-esc)}
+
+  .login-panel{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .login-card{width:100%;max-width:400px;background:#fff;border:1px solid var(--borda);border-radius:12px;padding:22px;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+  .login-card h1{font-size:20px;color:var(--azul-esc);margin-bottom:8px}
+  .login-card p{font-size:14px;color:var(--cinza);margin-bottom:16px}
+  .login-card label{display:block;font-size:12px;font-weight:700;color:var(--cinza);margin:12px 0 4px}
+  .login-card input{padding:11px 12px;border:1px solid var(--borda);border-radius:8px;font-size:16px;width:100%}
+  .login-card button{width:100%;margin-top:16px}
+  .login-card button:disabled{opacity:.6;cursor:wait}
+  .login-card .login-erro{margin-top:12px;color:var(--vermelho);font-weight:700}
+  body:not(.autenticado) header,body:not(.autenticado) main{display:none !important}
+  body.autenticado #loginPanel{display:none}
+  body.autenticado.role-lancamento #tab-fabrica,body.autenticado.role-lancamento .tab-btn[data-tab="fabrica"]{display:none !important}
+  body.autenticado.role-fabrica #tab-pedidos,body.autenticado.role-fabrica .tab-btn[data-tab="pedidos"]{display:none !important}
+  main{max-width:1100px;margin:18px auto;padding:0 16px}
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
+
+  /* ---------- CARDS / FORM ---------- */
+  .card{background:var(--card);border:1px solid var(--borda);border-radius:12px;padding:16px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .card h2{font-size:16px;color:var(--azul-esc);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--bg)}
+  .card h3{font-size:14px;color:var(--cinza);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.6px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .campo{display:flex;flex-direction:column;gap:4px}
+  .campo[hidden]{display:none !important}
+  .campo label{font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:.4px}
+  input[type=text],input[type=number],select{
+    padding:10px 12px;border:1px solid var(--borda);border-radius:8px;
+    font-size:14px;font-family:inherit;background:#fff;color:#0f172a;width:100%;
+  }
+  input:focus,select:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(29,78,216,.15)}
+
+  .btn-cliente{
+    text-align:left;padding:10px 12px;border:2px dashed var(--azul);border-radius:8px;
+    background:#eff6ff;color:var(--azul);font-weight:700;font-size:14px;cursor:pointer;width:100%;
+  }
+  .btn-cliente:hover{background:#dbeafe}
+  .btn-cliente .vazio{color:var(--cinza);font-weight:500}
+
+  .chk{display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;font-weight:600;color:var(--vermelho)}
+  .chk input{width:20px;height:20px;accent-color:var(--vermelho)}
+
+  button{font-family:inherit;cursor:pointer;font-size:14px;border-radius:8px;border:1px solid var(--borda);background:#fff;padding:10px 16px;font-weight:600;transition:.15s}
+  button:hover{filter:brightness(.95)}
+  .primario{background:var(--azul);color:#fff;border-color:var(--azul)}
+  .primario:hover{background:var(--azul-esc)}
+  .perigo{background:#fee2e2;color:var(--vermelho);border-color:#fca5a5}
+  .perigo:hover{background:#fecaca}
+  .sucesso{background:var(--verde);color:#fff;border-color:var(--verde)}
+
+  /* ---------- ITEM FORM ---------- */
+  .tipo-item-botoes{display:flex;gap:8px;margin-bottom:10px}
+  #ajudaMaterial{font-size:12px;color:var(--cinza);font-weight:600}
+  .tipo-item-botoes button.ativo{background:var(--azul-esc);color:#fff;border-color:var(--azul-esc)}
+  .item-form{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end}
+  .item-form.outro-ativo{grid-template-columns:1fr}
+  .item-form.outro-ativo>button{justify-self:start}
+  @media(max-width:720px){.item-form{grid-template-columns:1fr 1fr}.item-form.outro-ativo{grid-template-columns:1fr}}
+
+  .itens-temp{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:6px}
+  .itens-temp li{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    background:#f8fafc;border:1px solid var(--borda);border-left:4px solid var(--azul);
+    border-radius:8px;padding:8px 12px;font-size:13px;flex-wrap:wrap;
+  }
+  .itens-temp .medida{font-weight:700}
+  .tag-bitola{display:inline-block;padding:3px 9px;border-radius:14px;font-weight:800;white-space:nowrap}
+  .bitola-38{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd}
+  .bitola-42{background:#dcfce7;color:#166534;border:1px solid #86efac}
+  .bitola-50{background:#ffedd5;color:#9a3412;border:1px solid #fdba74}
+  .bitola-60{background:#f3e8ff;color:#6b21a8;border:1px solid #d8b4fe}
+  .pdf-tab .tag-bitola{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .itens-temp .pac{background:#e0e7ff;color:var(--azul-esc);padding:2px 8px;border-radius:20px;font-size:12px;font-weight:700}
+  .itens-temp button{padding:4px 10px;font-size:12px}
+
+  .acoes{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+  /* ---------- LISTA DE PEDIDOS ---------- */
+  .secao-titulo{display:flex;justify-content:space-between;align-items:center;margin:22px 0 10px;flex-wrap:wrap;gap:10px}
+  .secao-titulo h2{font-size:18px;color:var(--azul-esc)}
+
+  .pedido{background:var(--card);border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:6px solid var(--azul)}
+  .pedido.urgente{border-left-color:var(--vermelho);background:#fff5f5}
+  .pedido-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .pedido-cliente{font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+  .tag-urgente{background:var(--vermelho);color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.8px;margin-left:8px;animation:pisca 1.4s infinite}
+  @keyframes pisca{50%{opacity:.55}}
+  .pedido-data{font-size:12px;color:var(--cinza);font-weight:600}
+
+  table.tabela{width:100%;border-collapse:collapse;font-size:13px}
+  table.tabela th{text-align:left;font-size:11px;text-transform:uppercase;color:var(--cinza);border-bottom:1px solid var(--borda);padding:5px 6px}
+  table.tabela td{padding:6px;border-bottom:1px solid #eef2f7}
+  table.tabela .num{text-align:right}
+  table.tabela tfoot td{font-weight:800;border-top:2px solid var(--borda);border-bottom:none;padding-top:8px}
+
+  .pedido-rodape{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .info-extra{font-size:13px;color:var(--cinza)}
+  .info-extra b{color:#0f172a}
+  .pedido-acoes{display:flex;gap:8px;flex-wrap:wrap}
+  .pedido-acoes button{padding:7px 14px;font-size:13px}
+
+  .vazio{text-align:center;color:var(--cinza);padding:40px 10px;font-size:15px}
+
+  /* ---------- CHÃO DE FÁBRICA ---------- */
+  .fabrica-resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+  .resumo-box{background:var(--azul-esc);color:#fff;border-radius:12px;padding:14px;text-align:center}
+  .resumo-box.urg{background:var(--vermelho)}
+  .resumo-box span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.85}
+  .resumo-box strong{display:block;font-size:26px;margin-top:4px}
+
+  .fabrica-card{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:14px}
+  .fabrica-card.urgente{border-color:var(--vermelho);box-shadow:0 0 0 3px rgba(220,38,38,.12)}
+  .fabrica-card.pronto{border-color:var(--verde);background:#f0fdf4}
+  .fabrica-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .fabrica-status{display:inline-block;padding:4px 10px;border-radius:20px;background:#dbeafe;color:var(--azul-esc);font-size:12px;font-weight:800}
+  .fabrica-status.pronto{background:#dcfce7;color:var(--verde)}
+  .fabrica-acoes{display:flex;justify-content:flex-end;margin-top:12px}
+  .fabrica-cliente{font-size:20px;font-weight:900;text-transform:uppercase}
+  .fabrica-totais{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .fabrica-totais div{flex:1;min-width:90px;background:#f1f5f9;border-radius:10px;padding:8px;text-align:center}
+  .fabrica-totais span{display:block;font-size:10px;text-transform:uppercase;color:var(--cinza);font-weight:700;letter-spacing:.6px}
+  .fabrica-totais strong{font-size:22px;color:var(--azul-esc)}
+  .fabrica-obs{margin-top:10px;background:#fffbeb;border-left:4px solid var(--amarelo);padding:8px 10px;border-radius:6px;font-size:13px}
+  .fabrica-vazio{text-align:center;color:var(--cinza);padding:50px 10px}
+
+  /* ---------- MODAL CLIENTE ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;
+    align-items:center;justify-content:center;padding:20px;z-index:100;
+  }
+  .overlay.aberto{display:flex}
+  .modal{background:#fff;border-radius:14px;padding:22px;width:100%;max-width:420px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+  .modal h3{font-size:18px;color:var(--azul-esc);margin-bottom:6px}
+  .modal .hint{font-size:13px;color:var(--cinza);margin-bottom:14px}
+  .modal input{font-size:16px;padding:12px}
+  .modal-acoes{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+  .erro{color:var(--vermelho);font-size:13px;font-weight:700;margin-top:8px}
+
+  /* ---------- ÁREA DE IMPRESSÃO / PDF ---------- */
+  #printArea{display:none}
+
+  @media print{
+    @page{size:A4 portrait;margin:10mm}
+    body{background:#fff !important}
+    header,main,.overlay{display:none !important}
+    #printArea{display:block !important;color:#000;font-size:9pt}
+    .pdf-header{border-bottom:2px solid #000;padding-bottom:3px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:flex-end}
+    .pdf-header h1{font-size:13pt;letter-spacing:.5px}
+    .pdf-header .pdf-sub{font-size:7.5pt;color:#333;text-align:right}
+    .pdf-pedido{border:1px solid #888;border-radius:3px;padding:3px 5px;margin-bottom:3px;page-break-inside:avoid}
+    .pdf-pedido-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #bbb;padding-bottom:2px;margin-bottom:3px;gap:6px}
+    .pdf-cliente{font-weight:800;font-size:10pt;text-transform:uppercase;letter-spacing:.3px}
+    .pdf-urgente{background:#000;color:#fff;font-size:6.5pt;padding:1px 5px;border-radius:2px;font-weight:800;letter-spacing:.6px}
+    .pdf-data{font-size:7.5pt;color:#333;margin-left:auto}
+    .pdf-tab{width:70%;table-layout:fixed;border-collapse:collapse;font-size:8.5pt;margin-left:0}
+    .pdf-tab th,.pdf-tab td{border-bottom:1px solid #ddd;padding:1.5px 3px;text-align:left}
+    .pdf-tab th:nth-child(1),.pdf-tab td:nth-child(1){width:20%}
+    .pdf-tab th:nth-child(2),.pdf-tab td:nth-child(2){width:22%}
+    .pdf-tab th:nth-child(3),.pdf-tab td:nth-child(3){width:22%}
+    .pdf-tab th:nth-child(4),.pdf-tab td:nth-child(4){width:18%}
+    .pdf-tab th:nth-child(5),.pdf-tab td:nth-child(5){width:18%}
+    .pdf-tab th{background:#eee;font-size:7.5pt;text-transform:uppercase;letter-spacing:.3px}
+    .pdf-tab .num{text-align:right}
+    .pdf-tab tfoot td{font-weight:800;border-top:1.5px solid #666;border-bottom:none}
+    .pdf-info{font-size:7.5pt;margin-top:2px;display:flex;gap:14px;flex-wrap:wrap}
+    .pdf-totais{margin-top:5px;border-top:2px solid #000;padding-top:4px;display:flex;justify-content:space-between;font-size:9pt;font-weight:800}
+    .pdf-informacoes{margin-top:3px;font-size:8pt;display:flex;align-items:flex-end;gap:5px;page-break-inside:avoid}
+    .pdf-informacoes-titulo{font-weight:800;white-space:nowrap}
+    .pdf-informacoes-linha{height:12px;border-bottom:1px solid #999;flex:1}
+    .pdf-tab .kg-celula{width:70px;white-space:nowrap}
+    .pdf-kg-linha{display:inline-block;width:45px;border-bottom:1px solid #000;vertical-align:baseline}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<section id="loginPanel" class="login-panel">
+  <div class="login-card">
+    <h1>Acesso ao Controle de Pedidos</h1>
+    <p>Entre com seu usuário e senha.</p>
+    <form id="loginForm">
+      <label for="loginEmail">E-mail</label>
+      <input id="loginEmail" type="email" autocomplete="username" required>
+      <label for="loginSenha">Senha</label>
+      <input id="loginSenha" type="password" autocomplete="current-password" required>
+      <button id="btnEntrar" class="primario" type="submit" disabled>Carregando...</button>
+      <p id="loginErro" class="login-erro" role="alert" hidden></p>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== TOPO ===================== -->
+<header class="topo">
+  <div class="topo-inner">
+    <h1>Controle de Pedidos · Estribos</h1>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="pedidos">1 · Lançamento de Pedidos</button>
+      <button class="tab-btn" data-tab="fabrica">2 · Chão da Fábrica</button>
+      <button type="button" id="btnSair" class="tab-btn">Sair</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================== ABA 1 ===================== -->
+  <section id="tab-pedidos" class="tab-panel active">
+
+    <div class="card">
+      <h2 id="tituloForm">Novo Lançamento de Pedido</h2>
+
+      <div class="grid">
+        <div class="campo">
+          <label>Cliente * (obrigatório)</label>
+          <button type="button" class="btn-cliente" id="btnAbrirCliente">
+            <span id="clienteNome" class="vazio">Clique para informar o cliente</span>
+          </button>
+        </div>
+
+        <div class="campo">
+          <label>Urgência</label>
+          <label class="chk">
+            <input type="checkbox" id="urgente"> Pedido URGENTE
+          </label>
+        </div>
+
+      </div>
+
+      <h3>Itens do pedido</h3>
+      <div class="tipo-item-botoes">
+        <button type="button" id="btnTipoEstribo" class="ativo">Estribo</button>
+        <button type="button" id="btnTipoOutro">Outro material</button>
+      </div>
+      <div class="item-form">
+        <div class="campo" id="campoMedida">
+          <label>Medida do estribo</label>
+          <input type="text" id="itemMedida" placeholder="Ex.: 10x20">
+        </div>
+        <div class="campo" id="campoBitola">
+          <label>Bitola (mm)</label>
+          <input type="text" id="itemMaterial" inputmode="decimal" maxlength="3" placeholder="3,8 / 4,2 / 5,0 / 6,0" autocomplete="off">
+        </div>
+        <div class="campo" id="campoOutroNome" hidden>
+          <label>Material</label>
+          <input type="text" id="itemOutroNome" placeholder="Ex.: tela pop, arames, barras, bobinas" autocomplete="off">
+        </div>
+        <div class="campo" id="campoUnidadeBobina" hidden>
+          <label>Unidade da bobina</label>
+          <select id="itemUnidadeBobina"><option value="un">Unidade</option><option value="kg">Kg</option></select>
+        </div>
+        <div class="campo">
+          <label id="labelQtdItem">Qtd. de peças</label>
+          <input type="text" id="itemQtd" inputmode="decimal" autocomplete="off" placeholder="0">
+          <small id="ajudaMaterial" hidden></small>
+        </div>
+        <button type="button" class="primario" id="btnAddItem">+ Adicionar</button>
+      </div>
+
+      <ul class="itens-temp" id="listaItensTemp"></ul>
+
+      <div class="acoes">
+        <button type="button" class="primario" id="btnSalvar">Salvar lançamento</button>
+        <button type="button" id="btnCancelar" hidden>Cancelar edição</button>
+      </div>
+    </div>
+
+    <div class="secao-titulo">
+      <h2>Pedidos lançados</h2>
+      <button type="button" class="sucesso" id="btnPDFGeral">Gerar PDF (todos)</button>
+    </div>
+
+    <div id="listaPedidos"></div>
+  </section>
+
+  <!-- ===================== ABA 2 ===================== -->
+  <section id="tab-fabrica" class="tab-panel">
+    <div class="fabrica-resumo" id="fabricaResumo"></div>
+    <div id="fabricaLista"></div>
+  </section>
+
+</main>
+
+<!-- ===================== MODAL CLIENTE ===================== -->
+<div class="overlay" id="overlayCliente">
+  <div class="modal">
+    <h3>Identificar Cliente</h3>
+    <p class="hint">O nome do cliente é <b>obrigatório</b> para lançar o pedido.</p>
+    <input type="text" id="inputCliente" list="sugestoesClientes" placeholder="Digite o nome do cliente" autocomplete="off">
+    <datalist id="sugestoesClientes"></datalist>
+    <p class="erro" id="erroCliente" hidden>Informe o nome do cliente.</p>
+    <div class="modal-acoes">
+      <button type="button" id="btnCancelarCliente">Cancelar</button>
+      <button type="button" class="primario" id="btnConfirmarCliente">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ÁREA DE IMPRESSÃO ===================== -->
+<div id="printArea"></div>
+
+<!-- Firebase Web SDK: Authentication + Firestore -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js';
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js';
+  import { getFirestore, collection, doc, query, where, onSnapshot, writeBatch, updateDoc } from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: 'AIzaSyA4mosOkYxtWopiqADZbSisL-c0n7DzeVU',
+    authDomain: 'lancamento-952ad.firebaseapp.com',
+    projectId: 'lancamento-952ad',
+    storageBucket: 'lancamento-952ad.firebasestorage.app',
+    messagingSenderId: '73058817158',
+    appId: '1:73058817158:web:be7281a7093dd1dc17ed07'
+  };
+
+  try {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const resumoFabrica = data => ({
+      cliente:data.cliente,
+      urgente:!!data.urgente,
+      criadoEm:data.criadoEm,
+      pronto:!!data.pronto,
+      prontoEm:data.prontoEm ?? null,
+      temEstribo:true,
+      itens:(data.itens || []).filter(item => item.tipo !== 'outro').map(item => ({
+        tipo:'estribo', medida:item.medida, material:item.material, qtd:item.qtd
+      }))
+    });
+    window.firebaseApi = {
+      signIn: (email, password) => signInWithEmailAndPassword(auth, email, password),
+      signOut: () => signOut(auth),
+      listenPedidos: (role, next, error) => {
+        const nomeColecao = role === 'fabrica' ? 'fabricaPedidos' : 'pedidos';
+        return onSnapshot(collection(db, nomeColecao), snapshot => next(snapshot.docs.map(item => ({...item.data(), id:item.id}))), error);
+      },
+      addPedido: async data => {
+        const batch = writeBatch(db);
+        const ref = doc(collection(db, 'pedidos'));
+        batch.set(ref, data);
+        if (data.temEstribo) batch.set(doc(db, 'fabricaPedidos', ref.id), resumoFabrica(data));
+        await batch.commit();
+        return ref.id;
+      },
+      updatePedido: async (id, data) => {
+        const batch = writeBatch(db);
+        batch.set(doc(db, 'pedidos', id), data);
+        const publico = doc(db, 'fabricaPedidos', id);
+        if (data.temEstribo) batch.set(publico, resumoFabrica(data));
+        else batch.delete(publico);
+        await batch.commit();
+      },
+      deletePedido: async id => {
+        const batch = writeBatch(db);
+        batch.delete(doc(db, 'pedidos', id));
+        batch.delete(doc(db, 'fabricaPedidos', id));
+        await batch.commit();
+      },
+      updateStatus: async (id, data) => {
+        const batch = writeBatch(db);
+        batch.update(doc(db, 'pedidos', id), data);
+        batch.update(doc(db, 'fabricaPedidos', id), data);
+        await batch.commit();
+      }
+    };
+    window.dispatchEvent(new Event('firebase-ready'));
+    onAuthStateChanged(auth, user => window.dispatchEvent(new CustomEvent('firebase-auth-state', {detail:{user}})));
+  } catch (error) {
+    console.error('Falha ao iniciar Firebase:', error);
+    window.dispatchEvent(new CustomEvent('firebase-init-error', {detail:{message:error.message}}));
+  }
+</script>
+
+<script>
+/* ============================================================
+   CONFIGURAÇÃO
+   ============================================================ */
+const PECAS_POR_PACOTE = 500;
+const MATERIAIS = ['3.8','4.2','5.0','6.0'];
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const state = {
+  pedidos: [],
+  clientes: [],
+  editandoId: null,
+  clienteAtual: '',
+  itens: [],
+  tipoItemAtual: 'estribo',
+  role: null,
+  pararPedidos: null,
+  usuarioUid: null
+};
+
+const $ = s => document.querySelector(s);
+
+/* ============================================================
+   UTILITÁRIOS
+   ============================================================ */
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function classeBitola(material){
+  const normalizada = String(material ?? '').trim().replace(',', '.');
+  return ({'3.8':'bitola-38','4.2':'bitola-42','5.0':'bitola-50','6.0':'bitola-60'})[normalizada] || '';
+}
+function etiquetaBitola(material){
+  return `<span class="tag-bitola ${classeBitola(material)}">${esc(String(material))} mm</span>`;
+}
+function fmtQtd(n){ return Number(n||0).toLocaleString('pt-BR'); }
+function lerQuantidade(texto){
+  const valor = String(texto ?? '').trim().replace(',', '.');
+  if (!/^\d+(\.\d+)?$/.test(valor)) return NaN;
+  return Number(valor);
+}
+function textoQtdOutro(item){
+  const qtd = item.unidade === 'kg' ? fmtKg(item.qtd) : fmtQtd(item.qtd);
+  const unidade = item.unidade === 'kg' ? 'kg' : 'un.';
+  const caixas = item.caixas ? ` · ${fmtQtd(item.caixas)} caixa(s)` : '';
+  return `${qtd} ${unidade}${caixas}`;
+}
+function fmtKg(n){ return Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtData(ts){
+  const d = new Date(ts);
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* REGRA DOS PACOTES: a cada 500 peças = 1 pacote.
+   A variação (resto) NÃO precisa de pacote separado — ela
+   completa o último pacote. Por isso usamos arredondamento
+   para cima (Math.ceil). */
+function pacotesDe(qtd){
+  qtd = Number(qtd) || 0;
+  if (qtd <= 0) return 0;
+  return Math.ceil(qtd / PECAS_POR_PACOTE);
+}
+/* ============================================================
+   PERSISTÊNCIA
+   ============================================================ */
+function carregarClientes(){
+  try{
+    state.clientes = JSON.parse(localStorage.getItem('estribos.clientes') || '[]');
+    if (!Array.isArray(state.clientes)) state.clientes = [];
+  }catch(e){ state.clientes = []; }
+}
+function persistir(){
+  localStorage.setItem('estribos.clientes', JSON.stringify(state.clientes));
+}
+function ouvirPedidos(){
+  if (state.pararPedidos) state.pararPedidos();
+  state.pararPedidos = window.firebaseApi.listenPedidos(state.role, pedidos => {
+    state.pedidos = pedidos;
+    render();
+  }, error => {
+    console.error('Falha ao carregar pedidos:', error);
+    mostrarErroLogin('Não foi possível carregar os pedidos. Confira as regras do Firestore.');
+  });
+}
+function mostrarErroLogin(mensagem){
+  const erro = document.querySelector('#loginErro');
+  erro.textContent = mensagem;
+  erro.hidden = false;
+}
+function definirAcesso(user){
+  if (state.pararPedidos){ state.pararPedidos(); state.pararPedidos = null; }
+  state.pedidos = [];
+  state.usuarioUid = user ? user.uid : null;
+  state.role = user
+    ? (user.uid === 'F4Of7affTdh5iCauFJeMezXWCol1' ? 'lancamento'
+      : user.uid === 'j4lP0mUvsXdwRGgpKuAejzzYqzz1' ? 'fabrica' : null)
+    : null;
+  if (!user){
+    document.body.classList.remove('autenticado','role-lancamento','role-fabrica');
+    render();
+    return;
+  }
+  if (!state.role){
+    window.firebaseApi.signOut();
+    mostrarErroLogin('Este usuário não está autorizado neste app.');
+    return;
+  }
+  document.body.classList.add('autenticado');
+  document.body.classList.toggle('role-lancamento', state.role === 'lancamento');
+  document.body.classList.toggle('role-fabrica', state.role === 'fabrica');
+  document.querySelector('#loginErro').hidden = true;
+  document.querySelector('#loginEmail').value = '';
+  document.querySelector('#loginSenha').value = '';
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === (state.role === 'fabrica' ? 'fabrica' : 'pedidos')));
+  document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.id === (state.role === 'fabrica' ? 'tab-fabrica' : 'tab-pedidos')));
+  carregarClientes();
+  atualizarClienteUI();
+  atualizarDatalist();
+  ouvirPedidos();
+}
+window.addEventListener('firebase-ready', () => {
+  const btn = document.querySelector('#btnEntrar');
+  btn.disabled = false;
+  btn.textContent = 'Entrar';
+});
+window.addEventListener('firebase-init-error', event => {
+  document.querySelector('#btnEntrar').disabled = true;
+  mostrarErroLogin('Firebase não iniciou: ' + (event.detail?.message || 'verifique conexão e configuração.'));
+});
+window.addEventListener('firebase-auth-state', event => definirAcesso(event.detail.user));
+document.querySelector('#loginForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!window.firebaseApi) return;
+  const btn = document.querySelector('#btnEntrar');
+  const email = document.querySelector('#loginEmail').value.trim();
+  const senha = document.querySelector('#loginSenha').value;
+  document.querySelector('#loginErro').hidden = true;
+  btn.disabled = true; btn.textContent = 'Entrando...';
+  try { await window.firebaseApi.signIn(email, senha); }
+  catch (error) {
+    const mensagem = error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password'
+      ? 'E-mail ou senha incorretos.' : 'Não foi possível entrar. Confira o e-mail, a senha e a conexão.';
+    mostrarErroLogin(mensagem);
+  } finally { btn.disabled = false; btn.textContent = 'Entrar'; }
+});
+document.querySelector('#btnSair').addEventListener('click', () => window.firebaseApi?.signOut());
+
+function registrarCliente(nome){
+  if (!state.clientes.some(c => c.toLowerCase() === nome.toLowerCase())) {
+    state.clientes.push(nome);
+    state.clientes.sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  }
+}
+
+/* ============================================================
+   ABAS
+   ============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.toggle('active', p.id === 'tab-' + btn.dataset.tab);
+    });
+    if (btn.dataset.tab === 'fabrica') renderFabrica();
+  });
+});
+
+/* ============================================================
+   MODAL CLIENTE (janelinha separada · obrigatório)
+   ============================================================ */
+function abrirModalCliente(){
+  $('#inputCliente').value = state.clienteAtual || '';
+  $('#erroCliente').hidden = true;
+  $('#overlayCliente').classList.add('aberto');
+  setTimeout(()=>$('#inputCliente').focus(), 60);
+}
+function fecharModalCliente(){
+  $('#overlayCliente').classList.remove('aberto');
+}
+function confirmarCliente(){
+  const nome = $('#inputCliente').value.trim();
+  if (!nome){
+    $('#erroCliente').hidden = false;
+    $('#inputCliente').focus();
+    return;
+  }
+  state.clienteAtual = nome;
+  atualizarClienteUI();
+  registrarCliente(nome);
+  atualizarDatalist();
+  fecharModalCliente();
+}
+function atualizarClienteUI(){
+  const el = $('#clienteNome');
+  if (state.clienteAtual){
+    el.textContent = state.clienteAtual;
+    el.classList.remove('vazio');
+  } else {
+    el.textContent = 'Clique para informar o cliente';
+    el.classList.add('vazio');
+  }
+}
+function atualizarDatalist(){
+  $('#sugestoesClientes').innerHTML =
+    state.clientes.map(c => `<option value="${esc(c)}">`).join('');
+}
+
+$('#btnAbrirCliente').addEventListener('click', abrirModalCliente);
+$('#btnConfirmarCliente').addEventListener('click', confirmarCliente);
+$('#btnCancelarCliente').addEventListener('click', fecharModalCliente);
+$('#inputCliente').addEventListener('keydown', e => { if (e.key === 'Enter') confirmarCliente(); });
+$('#overlayCliente').addEventListener('click', e => { if (e.target.id === 'overlayCliente') fecharModalCliente(); });
+
+/* ============================================================
+   ITENS DO PEDIDO (temporários)
+   ============================================================ */
+function tipoMaterialOutro(nome){
+  const n = String(nome || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  if (n.includes('arame')) return 'arame';
+  if (n.includes('tela')) return 'tela';
+  if (n.includes('barra')) return 'barra';
+  if (n.includes('bobina')) return 'bobina';
+  return 'generico';
+}
+function atualizarRegraMaterial(){
+  const tipo = tipoMaterialOutro($('#itemOutroNome').value);
+  const bobina = tipo === 'bobina';
+  $('#campoUnidadeBobina').hidden = !bobina;
+  const unidadeBobina = $('#itemUnidadeBobina').value;
+  const kg = tipo === 'arame' || (bobina && unidadeBobina === 'kg');
+  const label = $('#labelQtdItem');
+  const qtd = $('#itemQtd');
+  const ajuda = $('#ajudaMaterial');
+  qtd.step = kg && tipo !== 'arame' ? '0.01' : '1';
+  qtd.min = kg && tipo !== 'arame' ? '0.01' : '1';
+  qtd.placeholder = kg ? '0,00' : '0';
+  if (tipo === 'arame'){
+    label.textContent = 'Peso em kg';
+    qtd.step = '20'; qtd.min = '20';
+    ajuda.textContent = 'De 20 em 20 kg. Cada 20 kg corresponde a 1 caixa.';
+    ajuda.hidden = false;
+  } else if (tipo === 'tela'){
+    label.textContent = 'Total de peças';
+    qtd.step = '1'; qtd.min = '1';
+    ajuda.textContent = 'Quantidade por unidade.';
+    ajuda.hidden = false;
+  } else if (tipo === 'barra'){
+    label.textContent = 'Quantidade de barras';
+    ajuda.textContent = 'Somente por unidade.';
+    ajuda.hidden = false;
+  } else if (tipo === 'bobina'){
+    label.textContent = unidadeBobina === 'kg' ? 'Peso em kg' : 'Quantidade de bobinas';
+    ajuda.textContent = unidadeBobina === 'kg' ? 'Informe o peso em kg.' : 'Quantidade por unidade.';
+    ajuda.hidden = false;
+  } else {
+    label.textContent = 'Total de peças';
+    ajuda.hidden = true;
+  }
+}
+function selecionarTipoItem(tipo){
+  state.tipoItemAtual = tipo;
+  const estribo = tipo === 'estribo';
+  $('.item-form').classList.toggle('outro-ativo', !estribo);
+  $('#campoMedida').hidden = !estribo;
+  $('#campoBitola').hidden = !estribo;
+  $('#campoOutroNome').hidden = estribo;
+  $('#campoUnidadeBobina').hidden = true;
+  $('#labelQtdItem').textContent = estribo ? 'Qtd. de peças' : 'Total de peças';
+  $('#ajudaMaterial').hidden = true;
+  $('#btnTipoEstribo').classList.toggle('ativo', estribo);
+  $('#btnTipoOutro').classList.toggle('ativo', !estribo);
+  if (!estribo) atualizarRegraMaterial();
+}
+$('#btnTipoEstribo').addEventListener('click', () => selecionarTipoItem('estribo'));
+$('#btnTipoOutro').addEventListener('click', () => selecionarTipoItem('outro'));
+$('#itemOutroNome').addEventListener('input', atualizarRegraMaterial);
+$('#itemUnidadeBobina').addEventListener('change', atualizarRegraMaterial);
+
+function addItem(){
+  if (state.tipoItemAtual === 'outro'){
+    const nome = $('#itemOutroNome').value.trim();
+    const tipoMaterial = tipoMaterialOutro(nome);
+    const quantidade = lerQuantidade($('#itemQtd').value);
+    const unidade = tipoMaterial === 'arame' ? 'kg' : (tipoMaterial === 'bobina' ? $('#itemUnidadeBobina').value : 'un');
+    if (!nome){ alert('Informe o nome do material.'); $('#itemOutroNome').focus(); return; }
+    if (!Number.isFinite(quantidade) || quantidade <= 0){ alert('Informe uma quantidade válida.'); $('#itemQtd').focus(); return; }
+    if (tipoMaterial === 'arame' && !Number.isInteger(quantidade / 20)){
+      alert('Arames devem ser informados de 20 em 20 kg. Cada 20 kg é 1 caixa.');
+      $('#itemQtd').focus(); return;
+    }
+    if (unidade === 'un' && !Number.isInteger(quantidade)){
+      alert('A quantidade por unidade deve ser um número inteiro.');
+      $('#itemQtd').focus(); return;
+    }
+    state.itens.push({tipo:'outro', medida:'—', material:nome, qtd:quantidade, unidade, caixas:tipoMaterial === 'arame' ? quantidade / 20 : 0});
+    $('#itemOutroNome').value = '';
+    $('#itemQtd').value = '';
+    $('#itemUnidadeBobina').value = 'un';
+    atualizarRegraMaterial();
+    $('#itemOutroNome').focus();
+    renderItensTemp();
+    return;
+  }
+  const medida = $('#itemMedida').value.trim();
+  const bitolaDigitada = $('#itemMaterial').value.trim().replace(',', '.');
+  const material = MATERIAIS.includes(bitolaDigitada) ? bitolaDigitada : '';
+  const qtd = lerQuantidade($('#itemQtd').value);
+
+  if (!medida){ alert('Informe a MEDIDA do estribo.'); $('#itemMedida').focus(); return; }
+  if (!material){
+    alert('Bitola inválida. Digite somente: 3,8; 4,2; 5,0 ou 6,0 mm.');
+    $('#itemMaterial').focus();
+    return;
+  }
+  if (!Number.isFinite(qtd) || qtd <= 0 || !Number.isInteger(qtd)){
+    alert('Informe a quantidade de peças com um número inteiro positivo.');
+    $('#itemQtd').focus(); return;
+  }
+
+  state.itens.push({ tipo:'estribo', medida, material, qtd });
+  $('#itemMedida').value = '';
+  $('#itemMaterial').value = '';
+  $('#itemOutroNome').value = '';
+  $('#itemQtd').value = '';
+  $('#itemMedida').focus();
+  renderItensTemp();
+}
+$('#btnAddItem').addEventListener('click', addItem);
+['itemMedida','itemQtd','itemOutroNome'].forEach(id => {
+  $('#'+id).addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+});
+
+function renderItensTemp(){
+  const ul = $('#listaItensTemp');
+  if (!state.itens.length){ ul.innerHTML = ''; return; }
+  ul.innerHTML = state.itens.map((it, idx) => `
+    <li>
+      <span>
+        ${it.tipo === 'outro' ? `<span class="medida">${esc(it.material)}</span> · <b>${textoQtdOutro(it)}</b>` : `<span class="medida">${esc(it.medida)}</span> · ${etiquetaBitola(it.material)} · <b>${fmtQtd(it.qtd)} peças</b>`}
+      </span>
+      <span style="display:flex;gap:8px;align-items:center">
+        ${it.tipo === 'outro' ? '' : `<span class="pac">${pacotesDe(it.qtd)} pct</span>`}
+        <button type="button" class="perigo" data-del="${idx}">Remover</button>
+      </span>
+    </li>`).join('');
+
+  ul.querySelectorAll('[data-del]').forEach(b => {
+    b.addEventListener('click', () => {
+      state.itens.splice(Number(b.dataset.del), 1);
+      renderItensTemp();
+    });
+  });
+}
+
+/* ============================================================
+   SALVAR / EDITAR / EXCLUIR
+   ============================================================ */
+$('#btnSalvar').addEventListener('click', async () => {
+  if (!state.clienteAtual){
+    alert('O nome do CLIENTE é obrigatório.\nInforme o cliente para continuar.');
+    abrirModalCliente();
+    return;
+  }
+  if (!state.itens.length){
+    alert('Adicione pelo menos 1 item (medida, material e quantidade).');
+    return;
+  }
+
+  const pedidoAnterior = state.editandoId
+    ? state.pedidos.find(x => x.id === state.editandoId)
+    : null;
+
+  const itensSalvos = state.itens.map(i => ({...i}));
+  const somenteEstoque = itensSalvos.length > 0 && itensSalvos.every(i => i.tipo === 'outro');
+  const dados = {
+    cliente: state.clienteAtual,
+    urgente: $('#urgente').checked,
+    kg: pedidoAnterior ? (pedidoAnterior.kg || 0) : 0,
+    obs: pedidoAnterior ? (pedidoAnterior.obs || '') : '',
+    pronto: somenteEstoque || (pedidoAnterior && pedidoAnterior.itens.some(i => i.tipo !== 'outro') ? !!pedidoAnterior.pronto : false),
+    temEstribo: itensSalvos.some(i => i.tipo !== 'outro'),
+    ...(somenteEstoque ? {prontoEm: pedidoAnterior?.prontoEm || Date.now()} : (pedidoAnterior && pedidoAnterior.itens.some(i => i.tipo !== 'outro') && pedidoAnterior.prontoEm ? {prontoEm:pedidoAnterior.prontoEm} : {})),
+    itens: itensSalvos
+  };
+
+  try {
+    if (state.editandoId){
+      await window.firebaseApi.updatePedido(state.editandoId, dados);
+    } else {
+      await window.firebaseApi.addPedido({criadoEm:Date.now(), ...dados});
+    }
+    registrarCliente(state.clienteAtual);
+    persistir();
+    limparFormulario();
+  } catch(error) {
+    console.error('Falha ao salvar pedido:', error);
+    alert('Não foi possível salvar. Confira sua conexão e as regras de acesso do Firestore.');
+  }
+});
+
+function limparFormulario(){
+  state.editandoId = null;
+  state.clienteAtual = '';
+  state.itens = [];
+  state.tipoItemAtual = 'estribo';
+  selecionarTipoItem('estribo');
+  $('#urgente').checked = false;
+  $('#itemMedida').value = '';
+  $('#itemQtd').value = '';
+  $('#itemMaterial').value = '';
+  $('#btnCancelar').hidden = true;
+  $('#btnSalvar').textContent = 'Salvar lançamento';
+  $('#tituloForm').textContent = 'Novo Lançamento de Pedido';
+  atualizarClienteUI();
+  renderItensTemp();
+}
+
+$('#btnCancelar').addEventListener('click', limparFormulario);
+
+/* Só é possível EDITAR ou EXCLUIR a partir do Lançamento de Pedidos (aba 1) */
+function editarPedido(id){
+  if (state.role !== 'lancamento') return;
+  const p = state.pedidos.find(x => x.id === id);
+  if (!p) return;
+  state.editandoId = id;
+  state.clienteAtual = p.cliente;
+  state.itens = p.itens.map(i => ({...i}));
+  $('#urgente').checked = !!p.urgente;
+  selecionarTipoItem(state.itens[0]?.tipo === 'outro' ? 'outro' : 'estribo');
+  $('#btnCancelar').hidden = false;
+  $('#btnSalvar').textContent = 'Salvar alterações';
+  $('#tituloForm').textContent = 'Editando lançamento';
+  atualizarClienteUI();
+  renderItensTemp();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function excluirPedido(id){
+  const p = state.pedidos.find(x => x.id === id);
+  if (!p) return;
+  if (state.role !== 'lancamento') return;
+  if (!confirm('Excluir o lançamento do cliente "' + p.cliente + '"?')) return;
+  try {
+    await window.firebaseApi.deletePedido(id);
+    if (state.editandoId === id) limparFormulario();
+  } catch(error) {
+    console.error('Falha ao excluir pedido:', error);
+    alert('Não foi possível excluir. Confira as regras de acesso do Firestore.');
+  }
+}
+
+/* ============================================================
+   ORDENAÇÃO: urgência primeiro, depois cliente, depois data
+   ============================================================ */
+function ordenar(lista){
+  return [...lista].sort((a,b) => {
+    if (a.urgente !== b.urgente) return a.urgente ? -1 : 1;
+    const ca = a.cliente.toLowerCase(), cb = b.cliente.toLowerCase();
+    if (ca !== cb) return ca.localeCompare(cb, 'pt-BR');
+    return a.criadoEm - b.criadoEm;
+  });
+}
+
+/* ============================================================
+   RENDER — ABA 1
+   ============================================================ */
+function render(){
+  renderListaPedidos();
+  renderFabrica();
+  atualizarDatalist();
+}
+
+function renderListaPedidos(){
+  const cont = $('#listaPedidos');
+  if (!state.pedidos.length){
+    cont.innerHTML = '<p class="vazio">Nenhum pedido lançado ainda.</p>';
+    return;
+  }
+
+  cont.innerHTML = ordenar(state.pedidos).map(p => {
+    const itensEstribo = p.itens.filter(i => i.tipo !== 'outro');
+    const tPecas = itensEstribo.reduce((s,i) => s + i.qtd, 0);
+    const tPac   = itensEstribo.reduce((s,i) => s + pacotesDe(i.qtd), 0);
+
+    return `
+    <article class="pedido ${p.urgente ? 'urgente' : ''}">
+      <div class="pedido-head">
+        <div>
+          <span class="pedido-cliente">${esc(p.cliente)}</span>
+          ${p.urgente ? '<span class="tag-urgente">URGENTE</span>' : ''}
+        </div>
+        <div class="pedido-data">Lançado em ${fmtData(p.criadoEm)}</div>
+      </div>
+
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>${p.itens.some(i => i.tipo === 'outro') ? 'Medida / material' : 'Medida do estribo'}</th>
+            <th>Material</th>
+            <th class="num">${p.itens.some(i => i.tipo === 'outro') ? 'Quantidade' : 'Qtd. peças'}</th>
+            <th class="num">Pacotes</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${p.itens.map(i => `
+            <tr>
+              <td><b>${i.tipo === 'outro' ? '—' : esc(i.medida)}</b></td>
+              <td>${i.tipo === 'outro' ? esc(i.material) : etiquetaBitola(i.material)}</td>
+              <td class="num">${i.tipo === 'outro' ? textoQtdOutro(i) : fmtQtd(i.qtd)}</td>
+              <td class="num">${i.tipo === 'outro' ? '' : pacotesDe(i.qtd)}</td>
+            </tr>`).join('')}
+        </tbody>
+        ${itensEstribo.length ? `<tfoot>
+          <tr>
+            <td colspan="2">TOTAL ESTRIBOS</td>
+            <td class="num">${fmtQtd(tPecas)}</td>
+            <td class="num">${tPac}</td>
+          </tr>
+        </tfoot>` : ''}
+      </table>
+
+      <div class="pedido-rodape">
+        <div class="info-extra">
+          ${p.kg ? `<b>${fmtKg(p.kg)} kg</b> &nbsp;·&nbsp; ` : ''}
+          ${p.obs ? `${esc(p.obs)}` : ''}
+        </div>
+        <div class="pedido-acoes">
+          ${state.role === 'lancamento' ? `<button type="button" onclick="editarPedido('${p.id}')">Editar</button><button type="button" class="perigo" onclick="excluirPedido('${p.id}')">Excluir</button>` : ''}
+          <button type="button" onclick="pdfPedido('${p.id}')">PDF</button>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+/* ============================================================
+   RENDER — ABA 2 (CHÃO DA FÁBRICA)
+   ============================================================ */
+function renderFabrica(){
+  const pedidosDeFabrica = state.pedidos.filter(p => p.itens.some(i => i.tipo !== 'outro'));
+  const emProducao = ordenar(pedidosDeFabrica.filter(p => !p.pronto));
+  const concluidos = ordenar(pedidosDeFabrica.filter(p => p.pronto));
+  const lista = emProducao.concat(concluidos);
+
+  const urg    = emProducao.filter(p => p.urgente).length;
+
+  $('#fabricaResumo').innerHTML = `
+    <div class="resumo-box"><span>Pedidos</span><strong>${lista.length}</strong></div>
+    <div class="resumo-box"><span>Em produção</span><strong>${emProducao.length}</strong></div>
+    <div class="resumo-box"><span>Prontos</span><strong>${concluidos.length}</strong></div>
+    <div class="resumo-box ${urg ? 'urg' : ''}"><span>Urgentes em produção</span><strong>${urg}</strong></div>
+  `;
+
+  const cont = $('#fabricaLista');
+  if (!lista.length){
+    cont.innerHTML = '<p class="fabrica-vazio">Nenhum pedido em produção.</p>';
+    return;
+  }
+
+  cont.innerHTML = lista.map(p => {
+    return `
+    <div class="fabrica-card ${p.pronto ? 'pronto' : (p.urgente ? 'urgente' : '')}">
+      <div class="fabrica-top">
+        <span class="fabrica-cliente">${esc(p.cliente)}</span>
+        <span>
+          ${p.urgente ? '<span class="tag-urgente">URGENTE</span>' : ''}
+          <span class="fabrica-status ${p.pronto ? 'pronto' : ''}">${p.pronto ? 'PRONTO' : 'EM PRODUÇÃO'}</span>
+        </span>
+      </div>
+
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>Medida</th><th>Material</th>
+            <th class="num">Peças</th><th class="num">Pacotes</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${p.itens.filter(i => i.tipo !== 'outro').map(i => `
+            <tr>
+              <td><b>${esc(i.medida)}</b></td>
+              <td>${etiquetaBitola(i.material)}</td>
+              <td class="num">${fmtQtd(i.qtd)}</td>
+              <td class="num"><b>${pacotesDe(i.qtd)}</b></td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+
+      ${p.kg ? `<div class="fabrica-totais"><div><span>KG</span><strong>${fmtKg(p.kg)}</strong></div></div>` : ''}
+
+      ${p.obs ? `<div class="fabrica-obs"><b>Obs.:</b> ${esc(p.obs)}</div>` : ''}
+      <div class="fabrica-acoes">
+        ${p.pronto
+          ? `<button type="button" onclick="alterarStatusPedido('${p.id}', false)">Voltar para produção</button>`
+          : `<button type="button" class="sucesso" onclick="alterarStatusPedido('${p.id}', true)">Confirmar pronto</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function alterarStatusPedido(id, pronto){
+  const pedido = state.pedidos.find(p => p.id === id);
+  if (!pedido || state.role !== 'fabrica') return;
+  const atualizacao = pronto ? {pronto:true, prontoEm:Date.now()} : {pronto:false, prontoEm:null};
+  try { await window.firebaseApi.updateStatus(id, atualizacao); }
+  catch(error) {
+    console.error('Falha ao atualizar status:', error);
+    alert('Não foi possível atualizar o status. Confira as regras do Firestore.');
+  }
+}
+
+/* ============================================================
+   PDF (impressão organizada e compacta)
+   ============================================================ */
+function montarHTMLPDF(lista, titulo){
+  const agora = new Date().toLocaleString('pt-BR');
+  const blocos = lista.map(p => {
+    return `
+    <div class="pdf-pedido">
+      <div class="pdf-pedido-top">
+        <span class="pdf-cliente">${esc(p.cliente)}</span>
+        ${p.urgente ? '<span class="pdf-urgente">URGENTE</span>' : ''}
+        <span class="pdf-data">${fmtData(p.criadoEm)}</span>
+      </div>
+      <table class="pdf-tab">
+        <thead>
+          <tr>
+            <th>Medida</th>
+            <th>Material</th>
+            <th class="num">QTD (PÇ)</th>
+            <th class="num">Pacotes</th>
+            <th>KG</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${p.itens.map(i => `
+            <tr>
+              <td>${i.tipo === 'outro' ? '—' : esc(i.medida)}</td>
+              <td>${i.tipo === 'outro' ? esc(i.material) : etiquetaBitola(i.material)}</td>
+              <td class="num">${i.tipo === 'outro' ? textoQtdOutro(i) : fmtQtd(i.qtd)}</td>
+              <td class="num">${i.tipo !== 'outro' && Number(i.qtd) > 0 && Number(i.qtd) % PECAS_POR_PACOTE === 0 ? pacotesDe(i.qtd) : ''}</td>
+              <td class="kg-celula"><span class="pdf-kg-linha">&nbsp;</span></td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="pdf-info">
+        ${p.obs ? `<span><b>Obs.:</b> ${esc(p.obs)}</span>` : ''}
+      </div>
+      <div class="pdf-informacoes">
+        <span class="pdf-informacoes-titulo">Informações:</span>
+        <span class="pdf-informacoes-linha"></span>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="pdf-header">
+      <h1>${esc(titulo)}</h1>
+      <div class="pdf-sub">
+        Emitido em ${agora}<br>
+        ${lista.length} pedido(s) · Regra: ${PECAS_POR_PACOTE} peças = 1 pacote
+      </div>
+    </div>
+    ${blocos}
+`;
+}
+
+function gerarPDF(lista, titulo){
+  if (!lista.length){ alert('Nenhum pedido para imprimir.'); return; }
+  $('#printArea').innerHTML = montarHTMLPDF(lista, titulo);
+  setTimeout(() => window.print(), 80);
+}
+
+function pdfPedido(id){
+  const p = state.pedidos.find(x => x.id === id);
+  if (!p) return;
+  gerarPDF([p], 'Pedido · ' + p.cliente);
+}
+
+$('#btnPDFGeral').addEventListener('click', () => {
+  gerarPDF(ordenar(state.pedidos), 'Relação de Pedidos · Estribos');
+});
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+carregarClientes();
+atualizarClienteUI();
+atualizarDatalist();
+renderItensTemp();
+selecionarTipoItem('estribo');
+render();
+</script>
+</body>
+</html>
