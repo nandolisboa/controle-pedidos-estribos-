@@ -154,6 +154,9 @@
   .fabrica-totais strong{font-size:22px;color:var(--azul-esc)}
   .fabrica-obs{margin-top:10px;background:#fffbeb;border-left:4px solid var(--amarelo);padding:8px 10px;border-radius:6px;font-size:13px}
   .fabrica-vazio{text-align:center;color:var(--cinza);padding:50px 10px}
+  .notificacao-fabrica{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .aviso-novo-pedido{position:fixed;right:16px;bottom:16px;z-index:150;max-width:min(420px,calc(100vw - 32px));background:var(--azul-esc);color:#fff;padding:14px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.24);font-weight:700;display:none}
+  .aviso-novo-pedido.visivel{display:block}
 
   /* ---------- MODAL CLIENTE ---------- */
   .overlay{
@@ -307,6 +310,10 @@
 
   <!-- ===================== ABA 2 ===================== -->
   <section id="tab-fabrica" class="tab-panel">
+    <div class="notificacao-fabrica">
+      <span id="estadoNotificacoes">Aviso de novos pedidos nesta tela.</span>
+      <button type="button" id="btnAtivarNotificacoes">Ativar notificações</button>
+    </div>
     <div class="fabrica-resumo" id="fabricaResumo"></div>
     <div id="fabricaLista"></div>
   </section>
@@ -330,6 +337,7 @@
 
 <!-- ===================== ÁREA DE IMPRESSÃO ===================== -->
 <div id="printArea"></div>
+<div id="avisoNovoPedido" class="aviso-novo-pedido" role="status" aria-live="polite"></div>
 
 <!-- Firebase Web SDK: Authentication + Firestore -->
 <script type="module">
@@ -366,7 +374,15 @@
       signOut: () => signOut(auth),
       listenPedidos: (role, next, error) => {
         const nomeColecao = role === 'fabrica' ? 'fabricaPedidos' : 'pedidos';
-        return onSnapshot(collection(db, nomeColecao), snapshot => next(snapshot.docs.map(item => ({...item.data(), id:item.id}))), error);
+        let primeiraLeitura = true;
+        return onSnapshot(collection(db, nomeColecao), snapshot => {
+          const pedidos = snapshot.docs.map(item => ({...item.data(), id:item.id}));
+          const novos = primeiraLeitura ? [] : snapshot.docChanges()
+            .filter(change => change.type === 'added')
+            .map(change => ({...change.doc.data(), id:change.doc.id}));
+          next(pedidos, novos, primeiraLeitura);
+          primeiraLeitura = false;
+        }, error);
       },
       addPedido: async data => {
         const batch = writeBatch(db);
@@ -424,7 +440,8 @@ const state = {
   tipoItemAtual: 'estribo',
   role: null,
   pararPedidos: null,
-  usuarioUid: null
+  usuarioUid: null,
+  notificarTimer: null
 };
 
 const $ = s => document.querySelector(s);
@@ -481,11 +498,50 @@ function carregarClientes(){
 function persistir(){
   localStorage.setItem('estribos.clientes', JSON.stringify(state.clientes));
 }
+function mostrarAvisoNovoPedido(pedido){
+  const texto = `Novo pedido de ${pedido.cliente || 'cliente'} chegou para a fábrica.`;
+  const aviso = document.querySelector('#avisoNovoPedido');
+  aviso.textContent = texto;
+  aviso.classList.add('visivel');
+  clearTimeout(state.notificarTimer);
+  state.notificarTimer = setTimeout(() => aviso.classList.remove('visivel'), 7000);
+  if (document.hidden && 'Notification' in window && Notification.permission === 'granted'){
+    try { new Notification('Novo pedido para a fábrica', {body:texto, tag:`pedido-${pedido.id}`}); }
+    catch(error){ console.warn('Notificação do navegador indisponível:', error); }
+  }
+}
+function atualizarEstadoNotificacoes(){
+  const status = document.querySelector('#estadoNotificacoes');
+  const botao = document.querySelector('#btnAtivarNotificacoes');
+  if (!('Notification' in window)){
+    status.textContent = 'Avisos aparecem enquanto o app estiver aberto.';
+    botao.hidden = true;
+  } else if (Notification.permission === 'granted'){
+    status.textContent = 'Notificações do navegador ativadas.';
+    botao.hidden = true;
+  } else if (Notification.permission === 'denied'){
+    status.textContent = 'Notificações bloqueadas pelo navegador; avisos aparecem nesta tela.';
+    botao.hidden = true;
+  } else {
+    status.textContent = 'Ative para receber aviso do navegador enquanto o app estiver aberto.';
+    botao.hidden = false;
+  }
+}
+document.querySelector('#btnAtivarNotificacoes').addEventListener('click', async () => {
+  if (!('Notification' in window)) return;
+  try {
+    await Notification.requestPermission();
+    atualizarEstadoNotificacoes();
+  } catch(error){
+    console.warn('Não foi possível pedir permissão para notificações:', error);
+  }
+});
 function ouvirPedidos(){
   if (state.pararPedidos) state.pararPedidos();
-  state.pararPedidos = window.firebaseApi.listenPedidos(state.role, pedidos => {
+  state.pararPedidos = window.firebaseApi.listenPedidos(state.role, (pedidos, novos, primeiraLeitura) => {
     state.pedidos = pedidos;
     render();
+    if (state.role === 'fabrica' && !primeiraLeitura) novos.forEach(mostrarAvisoNovoPedido);
   }, error => {
     console.error('Falha ao carregar pedidos:', error);
     mostrarErroLogin('Não foi possível carregar os pedidos. Confira as regras do Firestore.');
@@ -525,6 +581,7 @@ function definirAcesso(user){
   carregarClientes();
   atualizarClienteUI();
   atualizarDatalist();
+  if (state.role === 'fabrica') atualizarEstadoNotificacoes();
   ouvirPedidos();
 }
 window.addEventListener('firebase-ready', () => {
