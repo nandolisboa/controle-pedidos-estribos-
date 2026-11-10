@@ -62,11 +62,12 @@
   .campo{display:flex;flex-direction:column;gap:4px}
   .campo[hidden]{display:none !important}
   .campo label{font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:.4px}
-  input[type=text],input[type=number],select{
+  input[type=text],input[type=number],input[type=date],select,textarea{
     padding:10px 12px;border:1px solid var(--borda);border-radius:8px;
     font-size:14px;font-family:inherit;background:#fff;color:#0f172a;width:100%;
   }
-  input:focus,select:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(29,78,216,.15)}
+  textarea{min-height:76px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(29,78,216,.15)}
 
   .btn-cliente{
     text-align:left;padding:10px 12px;border:2px dashed var(--azul);border-radius:8px;
@@ -124,6 +125,8 @@
   .tag-urgente{background:var(--vermelho);color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.8px;margin-left:8px;animation:pisca 1.4s infinite}
   @keyframes pisca{50%{opacity:.55}}
   .pedido-data{font-size:12px;color:var(--cinza);font-weight:600}
+  .pedido-datas{font-size:12px;color:var(--cinza);font-weight:600;line-height:1.6}
+  .pedido-datas b{color:#334155}
 
   table.tabela{width:100%;border-collapse:collapse;font-size:13px}
   table.tabela th{text-align:left;font-size:11px;text-transform:uppercase;color:var(--cinza);border-bottom:1px solid var(--borda);padding:5px 6px}
@@ -192,7 +195,7 @@
     .pdf-pedido-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #bbb;padding-bottom:2px;margin-bottom:3px;gap:6px}
     .pdf-cliente{font-weight:800;font-size:10pt;text-transform:uppercase;letter-spacing:.3px}
     .pdf-urgente{background:#000;color:#fff;font-size:6.5pt;padding:1px 5px;border-radius:2px;font-weight:800;letter-spacing:.6px}
-    .pdf-data{font-size:7.5pt;color:#333;margin-left:auto}
+    .pdf-data{font-size:7.5pt;color:#333;margin-left:auto;text-align:right;line-height:1.5}
     .pdf-tab{width:70%;table-layout:fixed;border-collapse:collapse;font-size:8.5pt;margin-left:0}
     .pdf-tab th,.pdf-tab td{border-bottom:1px solid #ddd;padding:1.5px 3px;text-align:left}
     .pdf-tab th:nth-child(1),.pdf-tab td:nth-child(1){width:20%}
@@ -267,12 +270,26 @@
         </div>
 
         <div class="campo">
+          <label for="dataEntradaPedido">Data de entrada do pedido *</label>
+          <input type="date" id="dataEntradaPedido" required>
+        </div>
+
+        <div class="campo">
+          <label for="pretensaoEntrega">Pretensão de entrega (opcional)</label>
+          <input type="date" id="pretensaoEntrega">
+        </div>
+
+        <div class="campo">
           <label>Urgência</label>
           <label class="chk">
             <input type="checkbox" id="urgente"> Pedido URGENTE
           </label>
         </div>
 
+        <div class="campo" style="grid-column:1/-1">
+          <label for="anotacoesCliente">Anotações sobre o cliente (opcional)</label>
+          <textarea id="anotacoesCliente" placeholder="Informações importantes sobre o cliente ou o pedido"></textarea>
+        </div>
       </div>
 
       <h3>Itens do pedido</h3>
@@ -371,6 +388,9 @@
       cliente:data.cliente,
       urgente:!!data.urgente,
       criadoEm:data.criadoEm,
+      dataEntrada:data.dataEntrada || '',
+      pretensaoEntrega:data.pretensaoEntrega || '',
+      obs:data.obs || '',
       pronto:!!data.pronto,
       prontoEm:data.prontoEm ?? null,
       temEstribo:true,
@@ -487,13 +507,31 @@ function textoQtdOutro(item){
   const qtd = item.unidade === 'kg' ? fmtKg(item.qtd) : fmtQtd(item.qtd);
   const unidade = item.unidade === 'kg' ? 'kg' : 'un.';
   const caixas = item.caixas ? ` · ${fmtQtd(item.caixas)} caixa(s)` : '';
-  return `${qtd} ${unidade}${caixas}`;
+  const rolo = !item.caixas && tipoMaterialOutro(item.material) === 'arame' ? ' · rolo' : '';
+  return `${qtd} ${unidade}${caixas}${rolo}`;
 }
 function fmtKg(n){ return Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function dataLocalISO(data = new Date()){
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth()+1).padStart(2,'0');
+  const dia = String(data.getDate()).padStart(2,'0');
+  return `${ano}-${mes}-${dia}`;
+}
+function formatarDataISO(valor){
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(valor || ''))) return '';
+  const [ano,mes,dia] = valor.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+function dataEntradaDoPedido(pedido){
+  if (pedido.dataEntrada) return pedido.dataEntrada;
+  return pedido.criadoEm ? dataLocalISO(new Date(pedido.criadoEm)) : dataLocalISO();
+}
 function fmtData(ts){
   const d = new Date(ts);
   return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
+
+$('#dataEntradaPedido').value = dataLocalISO();
 
 /* REGRA DOS PACOTES: a cada 500 peças = 1 pacote.
    A variação (resto) NÃO precisa de pacote separado — ela
@@ -730,8 +768,8 @@ function atualizarRegraMaterial(){
   qtd.placeholder = kg ? '0,00' : '0';
   if (tipo === 'arame'){
     label.textContent = 'Peso em kg';
-    qtd.step = '20'; qtd.min = '20';
-    ajuda.textContent = 'De 20 em 20 kg. Cada 20 kg corresponde a 1 caixa.';
+    qtd.step = '0.01'; qtd.min = '0.01';
+    ajuda.textContent = 'Informe o peso em kg. A cada 20 kg exatos, conta 1 caixa; outros pesos contam como rolo.';
     ajuda.hidden = false;
   } else if (tipo === 'tela'){
     label.textContent = 'Total de peças';
@@ -778,15 +816,13 @@ function addItem(){
     const unidade = tipoMaterial === 'arame' ? 'kg' : (tipoMaterial === 'bobina' ? $('#itemUnidadeBobina').value : 'un');
     if (!nome){ alert('Informe o nome do material.'); $('#itemOutroNome').focus(); return; }
     if (!Number.isFinite(quantidade) || quantidade <= 0){ alert('Informe uma quantidade válida.'); $('#itemQtd').focus(); return; }
-    if (tipoMaterial === 'arame' && !Number.isInteger(quantidade / 20)){
-      alert('Arames devem ser informados de 20 em 20 kg. Cada 20 kg é 1 caixa.');
-      $('#itemQtd').focus(); return;
-    }
     if (unidade === 'un' && !Number.isInteger(quantidade)){
       alert('A quantidade por unidade deve ser um número inteiro.');
       $('#itemQtd').focus(); return;
     }
-    state.itens.push({tipo:'outro', medida:'—', material:nome, qtd:quantidade, unidade, caixas:tipoMaterial === 'arame' ? quantidade / 20 : 0});
+    const caixas = tipoMaterial === 'arame' && Math.abs(quantidade / 20 - Math.round(quantidade / 20)) < 1e-9
+      ? Math.round(quantidade / 20) : 0;
+    state.itens.push({tipo:'outro', medida:'—', material:nome, qtd:quantidade, unidade, caixas});
     $('#itemOutroNome').value = '';
     $('#itemQtd').value = '';
     $('#itemUnidadeBobina').value = 'un';
@@ -866,11 +902,26 @@ $('#btnSalvar').addEventListener('click', async () => {
 
   const itensSalvos = state.itens.map(i => ({...i}));
   const somenteEstoque = itensSalvos.length > 0 && itensSalvos.every(i => i.tipo === 'outro');
+  const dataEntrada = $('#dataEntradaPedido').value;
+  const pretensaoEntrega = $('#pretensaoEntrega').value;
+  if (!dataEntrada){
+    alert('Informe a data de entrada do pedido.');
+    $('#dataEntradaPedido').focus();
+    return;
+  }
+  if (pretensaoEntrega && pretensaoEntrega < dataEntrada){
+    alert('A pretensão de entrega não pode ser anterior à data de entrada.');
+    $('#pretensaoEntrega').focus();
+    return;
+  }
+
   const dados = {
     cliente: state.clienteAtual,
+    dataEntrada,
+    pretensaoEntrega,
     urgente: $('#urgente').checked,
     kg: pedidoAnterior ? (pedidoAnterior.kg || 0) : 0,
-    obs: pedidoAnterior ? (pedidoAnterior.obs || '') : '',
+    obs: $('#anotacoesCliente').value.trim(),
     pronto: somenteEstoque || (pedidoAnterior && pedidoAnterior.itens.some(i => i.tipo !== 'outro') ? !!pedidoAnterior.pronto : false),
     temEstribo: itensSalvos.some(i => i.tipo !== 'outro'),
     ...(somenteEstoque ? {prontoEm: pedidoAnterior?.prontoEm || Date.now()} : (pedidoAnterior && pedidoAnterior.itens.some(i => i.tipo !== 'outro') && pedidoAnterior.prontoEm ? {prontoEm:pedidoAnterior.prontoEm} : {})),
@@ -899,6 +950,9 @@ function limparFormulario(){
   state.tipoItemAtual = 'estribo';
   selecionarTipoItem('estribo');
   $('#urgente').checked = false;
+  $('#dataEntradaPedido').value = dataLocalISO();
+  $('#pretensaoEntrega').value = '';
+  $('#anotacoesCliente').value = '';
   $('#itemMedida').value = '';
   $('#itemQtd').value = '';
   $('#itemMaterial').value = '';
@@ -920,6 +974,9 @@ function editarPedido(id){
   state.clienteAtual = p.cliente;
   state.itens = p.itens.map(i => ({...i}));
   $('#urgente').checked = !!p.urgente;
+  $('#dataEntradaPedido').value = dataEntradaDoPedido(p);
+  $('#pretensaoEntrega').value = p.pretensaoEntrega || '';
+  $('#anotacoesCliente').value = p.obs || '';
   selecionarTipoItem(state.itens[0]?.tipo === 'outro' ? 'outro' : 'estribo');
   $('#btnCancelar').hidden = false;
   $('#btnSalvar').textContent = 'Salvar alterações';
@@ -983,7 +1040,11 @@ function renderListaPedidos(){
           <span class="pedido-cliente">${esc(p.cliente)}</span>
           ${p.urgente ? '<span class="tag-urgente">URGENTE</span>' : ''}
         </div>
-        <div class="pedido-data">Lançado em ${fmtData(p.criadoEm)}</div>
+        <div class="pedido-datas">
+          <div><b>Entrada:</b> ${formatarDataISO(dataEntradaDoPedido(p))}</div>
+          ${p.pretensaoEntrega ? `<div><b>Entrega pretendida:</b> ${formatarDataISO(p.pretensaoEntrega)}</div>` : ''}
+          <div>Lançado em ${fmtData(p.criadoEm)}</div>
+        </div>
       </div>
 
       <table class="tabela">
@@ -1016,7 +1077,7 @@ function renderListaPedidos(){
       <div class="pedido-rodape">
         <div class="info-extra">
           ${p.kg ? `<b>${fmtKg(p.kg)} kg</b> &nbsp;·&nbsp; ` : ''}
-          ${p.obs ? `${esc(p.obs)}` : ''}
+          ${p.obs ? `<b>Anotações:</b> ${esc(p.obs)}` : ''}
         </div>
         <div class="pedido-acoes">
           ${state.role === 'lancamento' ? `<button type="button" onclick="editarPedido('${p.id}')">Editar</button><button type="button" class="perigo" onclick="excluirPedido('${p.id}')">Excluir</button>` : ''}
@@ -1061,6 +1122,11 @@ function renderFabrica(){
           <span class="fabrica-status ${p.pronto ? 'pronto' : ''}">${p.pronto ? 'PRONTO' : 'EM PRODUÇÃO'}</span>
         </span>
       </div>
+      <div class="pedido-datas">
+        <div><b>Entrada:</b> ${formatarDataISO(dataEntradaDoPedido(p))}</div>
+        ${p.pretensaoEntrega ? `<div><b>Entrega pretendida:</b> ${formatarDataISO(p.pretensaoEntrega)}</div>` : ''}
+      </div>
+      ${p.obs ? `<div class="fabrica-obs"><b>Anotações:</b> ${esc(p.obs)}</div>` : ''}
 
       <table class="tabela">
         <thead>
@@ -1082,7 +1148,7 @@ function renderFabrica(){
 
       ${p.kg ? `<div class="fabrica-totais"><div><span>KG</span><strong>${fmtKg(p.kg)}</strong></div></div>` : ''}
 
-      ${p.obs ? `<div class="fabrica-obs"><b>Obs.:</b> ${esc(p.obs)}</div>` : ''}
+      ${p.obs ? `<div class="fabrica-obs"><b>Anotações:</b> ${esc(p.obs)}</div>` : ''}
       <div class="fabrica-acoes">
         ${p.pronto
           ? `<button type="button" onclick="alterarStatusPedido('${p.id}', false)">Voltar para produção</button>`
@@ -1114,7 +1180,7 @@ function montarHTMLPDF(lista, titulo){
       <div class="pdf-pedido-top">
         <span class="pdf-cliente">${esc(p.cliente)}</span>
         ${p.urgente ? '<span class="pdf-urgente">URGENTE</span>' : ''}
-        <span class="pdf-data">${fmtData(p.criadoEm)}</span>
+        <span class="pdf-data">Entrada: ${formatarDataISO(dataEntradaDoPedido(p))}${p.pretensaoEntrega ? `<br>Entrega pretendida: ${formatarDataISO(p.pretensaoEntrega)}` : ''}<br>Lançado: ${fmtData(p.criadoEm)}</span>
       </div>
       <table class="pdf-tab">
         <thead>
@@ -1138,7 +1204,7 @@ function montarHTMLPDF(lista, titulo){
         </tbody>
       </table>
       <div class="pdf-info">
-        ${p.obs ? `<span><b>Obs.:</b> ${esc(p.obs)}</span>` : ''}
+        ${p.obs ? `<span><b>Anotações:</b> ${esc(p.obs)}</span>` : ''}
       </div>
       <div class="pdf-informacoes">
         <span class="pdf-informacoes-titulo">Informações:</span>
