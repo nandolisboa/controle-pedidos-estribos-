@@ -432,9 +432,9 @@
       },
       updatePedido: async (id, data) => {
         const batch = writeBatch(db);
-        batch.set(doc(db, 'pedidos', id), data);
+        batch.update(doc(db, 'pedidos', id), data);
         const publico = doc(db, 'fabricaPedidos', id);
-        if (data.temEstribo) batch.set(publico, resumoFabrica(data));
+        if (data.temEstribo) batch.set(publico, resumoFabrica(data), {merge:true});
         else batch.delete(publico);
         await batch.commit();
       },
@@ -917,6 +917,7 @@ $('#btnSalvar').addEventListener('click', async () => {
 
   const dados = {
     cliente: state.clienteAtual,
+    criadoEm: pedidoAnterior?.criadoEm || Date.now(),
     dataEntrada,
     pretensaoEntrega,
     urgente: $('#urgente').checked,
@@ -939,7 +940,8 @@ $('#btnSalvar').addEventListener('click', async () => {
     limparFormulario();
   } catch(error) {
     console.error('Falha ao salvar pedido:', error);
-    alert('Não foi possível salvar. Confira sua conexão e as regras de acesso do Firestore.');
+    const detalhe = [error?.code, error?.message].filter(Boolean).join(' — ');
+    alert('Não foi possível salvar o pedido.' + (detalhe ? '\n\nDetalhe do Firestore: ' + detalhe : '\nConfira a conexão e as regras de acesso do Firestore.'));
   }
 });
 
@@ -1080,7 +1082,7 @@ function renderListaPedidos(){
           ${p.obs ? `<b>Anotações:</b> ${esc(p.obs)}` : ''}
         </div>
         <div class="pedido-acoes">
-          ${state.role === 'lancamento' ? `<button type="button" onclick="editarPedido('${p.id}')">Editar</button><button type="button" class="perigo" onclick="excluirPedido('${p.id}')">Excluir</button>` : ''}
+          ${state.role === 'lancamento' ? `<button type="button" onclick="editarPedido('${p.id}')">Editar pedido</button><button type="button" class="perigo" onclick="excluirPedido('${p.id}')">Excluir</button>` : ''}
           <button type="button" onclick="pdfPedido('${p.id}')">PDF</button>
         </div>
       </div>
