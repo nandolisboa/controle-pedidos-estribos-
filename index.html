@@ -42,6 +42,9 @@ main.wrap{max-width:1100px;margin:20px auto 0;padding:0 20px 48px}.tab-panel{dis
 @media(prefers-reduced-motion:reduce){.pedido.urgente,.fabrica-card.urgente,.tag-urgente{animation:none!important}}
 
 
+
+.btn-nao-caixa{align-self:flex-start;border:1px solid #b91c1c;border-radius:8px;background:#fff;color:#991b1b;padding:8px 12px;font-size:12px;font-weight:800;letter-spacing:.2px}.btn-nao-caixa[aria-pressed="true"]{background:#991b1b;color:#fff;box-shadow:0 0 0 2px #fee2e2}
+
 </style>
 </head>
 <body>
@@ -140,6 +143,7 @@ main.wrap{max-width:1100px;margin:20px auto 0;padding:0 20px 48px}.tab-panel{dis
           <label id="labelQtdItem" for="itemQtd" class="sr-only">Qtd. de peças</label>
           <input type="text" id="itemQtd" aria-label="Quantidade" inputmode="decimal" autocomplete="off" placeholder="Qtd. de peças">
           <small id="ajudaMaterial" hidden></small>
+          <button type="button" id="btnNaoCaixa" class="btn-nao-caixa" aria-pressed="false" hidden>NÃO É CAIXA</button>
         </div>
         <button type="button" class="primario" id="btnAddItem">+ Adicionar</button>
       </div>
@@ -319,7 +323,8 @@ const state = {
   pararPedidos: null,
   notificarTimer: null,
   notificacoesFila: [],
-  prontosExpandidos: false
+  prontosExpandidos: false,
+  naoCaixaArame: false
 };
 
 const $ = s => document.querySelector(s);
@@ -346,8 +351,8 @@ function lerQuantidade(texto){
 function textoQtdOutro(item){
   const qtd = item.unidade === 'kg' ? fmtKg(item.qtd) : fmtQtd(item.qtd);
   const unidade = item.unidade === 'kg' ? 'kg' : 'un.';
-  const caixas = item.caixas ? ` · ${fmtQtd(item.caixas)} caixa(s)` : '';
-  const rolo = item.unidade === 'kg' && !item.caixas && tipoMaterialOutro(item.material) === 'arame' ? ' · rolo' : '';
+  const caixas = item.caixas ? ` · ${fmtQtd(item.caixas)} caixa(s) de 20 kg` : '';
+  const rolo = item.unidade === 'kg' && !item.caixas && !item.naoCaixa && tipoMaterialOutro(item.material) === 'arame' ? ' · rolo' : '';
   return `${qtd} ${unidade}${caixas}${rolo}`;
 }
 function fmtKg(n){ return Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
@@ -655,14 +660,21 @@ function atualizarRegraMaterial(){
   $('#campoUnidadeBobina').hidden = !selecionaUnidade;
   const unidadeEscolhida = $('#itemUnidadeBobina').value;
   const kg = selecionaUnidade && unidadeEscolhida === 'kg';
+  if (tipo !== 'arame') state.naoCaixaArame = false;
   const label = $('#labelQtdItem');
   const qtd = $('#itemQtd');
   const ajuda = $('#ajudaMaterial');
+  const naoCaixa = $('#btnNaoCaixa');
+  if (naoCaixa){
+    naoCaixa.hidden = tipo !== 'arame' || !kg;
+    naoCaixa.setAttribute('aria-pressed', String(state.naoCaixaArame));
+    naoCaixa.textContent = state.naoCaixaArame ? 'NÃO É CAIXA · ATIVO' : 'NÃO É CAIXA';
+  }
   qtd.placeholder = kg ? '0,00' : '0';
   if (tipo === 'arame'){
     label.textContent = kg ? 'Peso em kg' : 'Quantidade de unidades';
     qtd.placeholder = kg ? 'Peso em kg' : 'Quantidade de unidades';
-    ajuda.textContent = kg ? 'Informe o peso em kg. A cada 20 kg exatos, conta 1 caixa; outros pesos contam como rolo.' : 'Informe a quantidade de unidades/rolos.';
+    ajuda.textContent = kg ? (state.naoCaixaArame ? 'Peso em kg, sem converter em caixa de 20 kg.' : 'A cada 20 kg exatos, conta 1 caixa; outros pesos contam como rolo.') : 'Informe a quantidade de unidades/rolos.';
     ajuda.hidden = false;
   } else if (tipo === 'tela'){
     label.textContent = 'Total de peças';
@@ -730,6 +742,10 @@ $('#btnTipoEstribo').addEventListener('click', () => selecionarTipoItem('estribo
 $('#btnTipoOutro').addEventListener('click', () => selecionarTipoItem('outro'));
 $('#itemOutroNome').addEventListener('input', atualizarRegraMaterial);
 $('#itemUnidadeBobina').addEventListener('change', atualizarRegraMaterial);
+$('#btnNaoCaixa').addEventListener('click', () => {
+  state.naoCaixaArame = !state.naoCaixaArame;
+  atualizarRegraMaterial();
+});
 
 function addItem(){
   if (state.tipoItemAtual === 'outro'){
@@ -743,7 +759,8 @@ function addItem(){
       alert('A quantidade por unidade deve ser um número inteiro.');
       $('#itemQtd').focus(); return;
     }
-    const caixas = tipoMaterial === 'arame' && unidade === 'kg' && Math.abs(quantidade / 20 - Math.round(quantidade / 20)) < 1e-9
+    const naoCaixa = tipoMaterial === 'arame' && unidade === 'kg' && state.naoCaixaArame;
+    const caixas = tipoMaterial === 'arame' && unidade === 'kg' && !naoCaixa && Math.abs(quantidade / 20 - Math.round(quantidade / 20)) < 1e-9
       ? Math.round(quantidade / 20) : 0;
     const tela = tipoMaterial === 'tela' ? telaPorCodigo(nome) : null;
     if (tipoMaterial === 'tela' && !tela){
@@ -751,11 +768,12 @@ function addItem(){
       $('#itemOutroNome').focus();
       return;
     }
-    state.itens.push({tipo:'outro', medida:tela ? tela.medida : '—', material:tela ? 'Tela' : nome, codigo:tela?.codigo || '', bitola:tela?.bitola || '', qtd:quantidade, unidade, caixas});
+    state.itens.push({tipo:'outro', medida:tela ? tela.medida : '—', material:tela ? 'Tela' : nome, codigo:tela?.codigo || '', bitola:tela?.bitola || '', qtd:quantidade, unidade, caixas, naoCaixa});
     $('#itemOutroNome').value = '';
     $('#itemQtd').value = '';
     $('#itemUnidadeBobina').value = 'un';
-      atualizarRegraMaterial();
+    state.naoCaixaArame = false;
+    atualizarRegraMaterial();
     $('#itemOutroNome').focus();
     renderItensTemp();
     return;
@@ -937,6 +955,7 @@ function limparFormulario(){
   $('#itemMaterial').value = '';
   $('#itemOutroNome').value = '';
   $('#itemUnidadeBobina').value = 'un';
+  state.naoCaixaArame = false;
   $('#btnCancelar').hidden = true;
   $('#btnSalvar').textContent = 'LANÇAR';
   $('#tituloForm').textContent = 'LANÇAMENTO DE PEDIDOS';
@@ -960,6 +979,8 @@ function editarPedido(id){
   $('#anotacoesCliente').value = p.obs || '';
   const primeiroOutro = state.itens.find(i => i.tipo === 'outro');
   $('#itemOutroNome').value = primeiroOutro?.codigo || primeiroOutro?.material || '';
+  $('#itemUnidadeBobina').value = primeiroOutro?.unidade || 'un';
+  state.naoCaixaArame = !!primeiroOutro?.naoCaixa;
   selecionarTipoItem(state.itens[0]?.tipo === 'outro' ? 'outro' : 'estribo');
   $('#btnCancelar').hidden = false;
   $('#btnSalvar').textContent = 'LANÇAR';
