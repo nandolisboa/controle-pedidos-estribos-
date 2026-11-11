@@ -48,6 +48,28 @@ main.wrap{max-width:1100px;margin:20px auto 0;padding:0 20px 48px}.tab-panel{dis
 
 .itens-temp li>span:last-child{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.item-editar{border:1px solid #d1d5db;border-radius:7px;background:#fff;color:#374151;padding:7px 10px;font-size:11px;font-weight:800}.item-apagar-x{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;padding:0!important;border:1px solid #fecaca!important;border-radius:8px!important;background:#fff1f2!important;color:#dc2626!important;font-size:24px!important;line-height:1;font-weight:800!important}.item-apagar-x:hover{background:#fee2e2!important;color:#991b1b!important}
 @media(max-width:899px){.itens-temp li>span:last-child{width:100%;justify-content:flex-end}.item-editar{min-height:34px}.item-apagar-x{min-height:36px}}
+
+@media print{
+  @page{size:A4 portrait;margin:10mm}
+  #printArea{font-size:10pt!important}
+  .pdf-header{margin-bottom:10px;padding-bottom:7px}
+  .pdf-brand{font-size:16pt!important}
+  .pdf-title{font-size:10pt!important}
+  .pdf-header .pdf-sub{font-size:8.5pt!important;line-height:1.35}
+  .pdf-pedido{padding:7px 9px;margin-bottom:7px}
+  .pdf-pedido-top{gap:4px 8px;padding-bottom:5px;margin-bottom:5px}
+  .pdf-cliente{font-size:11pt!important}
+  .pdf-urgente{font-size:8pt!important;padding:3px 6px}
+  .pdf-data{font-size:8.5pt!important;line-height:1.3}
+  .pdf-tab{font-size:9.5pt!important}
+  .pdf-tab th,.pdf-tab td{padding:4px 5px;line-height:1.25}
+  .pdf-tab th{font-size:8pt!important}
+  .pdf-tab .tag-bitola{font-size:9pt!important}
+  .pdf-info,.pdf-informacoes{font-size:8.5pt!important;line-height:1.3;margin-top:5px}
+  .pdf-informacoes-linha{height:10px}
+  .pdf-kg-linha{width:68px}
+}
+
 </style>
 </head>
 <body>
