@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Controle de Pedidos · Estribos</title>
+<title>Controle de Pedidos · Estribos — V2</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#f3f4f6;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--red:#dc2626;--red-dark:#b91c1c;--shadow:0 1px 4px rgba(0,0,0,.06)}
@@ -90,6 +90,9 @@ main.wrap{max-width:1100px;margin:20px auto 0;padding:0 20px 48px}.tab-panel{dis
 button:not(.btn-confirmar-estribo){border-radius:10px!important}.btn-confirmar-estribo{border-radius:2px!important}
 
 .pedido-rodape{display:flex;flex-direction:column;align-items:stretch;gap:9px}.pedido-rodape .info-extra{width:100%;flex:auto}.pedido-acoes{display:grid;width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center}.pedido-acoes button{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:100%;min-width:0;min-height:42px;padding:8px 10px;font-size:12px;line-height:1.2;white-space:normal;text-align:center}.pedido-acoes-documento{display:flex;width:100%;align-items:center;gap:7px}.pedido-acoes-documento>button[data-action="pdf"]{flex:1}.pedido-acoes-documento>button.acao-excluir-x{flex:0 0 42px;width:42px;min-width:42px;padding:0;font-size:24px;white-space:nowrap}.pedido-acoes button.acao-entregue{border-color:#86efac;background:#f0fdf4;color:#166534;font-weight:800}.pedido-acoes button.acao-excluir-x{border-color:#fecaca;background:#fff1f2;color:#dc2626}.pedido .pedido-acoes{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px!important;width:100%;align-items:stretch}.pedido .pedido-acoes>button{width:100%!important;min-width:0!important;min-height:42px!important;margin:0!important;white-space:normal!important;line-height:1.15!important}.pedido .pedido-acoes>button.acao-entregue{grid-column:1/-1}.pedido .pedido-acoes .pedido-acoes-documento{grid-column:2;display:flex;width:100%;min-width:0;gap:7px;align-self:stretch}.pedido .pedido-acoes .pedido-acoes-documento>button[data-action="pdf"]{flex:1;min-width:0}.pedido .pedido-acoes .pedido-acoes-documento>button.acao-excluir-x{flex:0 0 42px;width:42px!important;min-width:42px!important;white-space:nowrap!important}#confirmarExclusaoDialog .perigo{background:#dc2626;border-color:#dc2626;color:#fff}
+
+/* V2 — filtros e rastreabilidade */
+.pedidos-filtros{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0 18px}.pedidos-filtros input,.pedidos-filtros select{min-height:42px;padding:8px 10px;border-radius:10px;border:1px solid #d6d6d6;font:inherit}.pedido-codigo{display:inline-block;margin-right:8px;padding:3px 7px;border-radius:6px;background:#111;color:#fff;font-size:.78rem;font-weight:700;letter-spacing:.04em}.pedido-meta{font-size:.78rem;color:#666;margin-top:4px}.pedido-historico{margin-top:10px;font-size:.82rem;color:#555}.pedido-historico summary{cursor:pointer;font-weight:700}.pedido-historico ul{margin:7px 0 0;padding-left:18px}
 </style>
 </head>
 <body>
@@ -210,6 +213,17 @@ button:not(.btn-confirmar-estribo){border-radius:10px!important}.btn-confirmar-e
       <h2>Pedidos lançados</h2>
       <button type="button" class="sucesso" id="btnPDFGeral">Gerar PDF completo (sem entregues)</button>
     </div>
+    <div class="pedidos-filtros" aria-label="Filtros de pedidos">
+      <input id="filtroPedidosBusca" type="search" placeholder="Buscar cliente ou nº do pedido">
+      <select id="filtroPedidosStatus" aria-label="Filtrar por status">
+        <option value="todos">Todos os status</option>
+        <option value="urgente">Urgentes</option>
+        <option value="produzindo">Produzindo</option>
+        <option value="pronto">Prontos</option>
+        <option value="entregue">Entregues</option>
+      </select>
+      <button type="button" id="limparFiltrosPedidos">Limpar filtros</button>
+    </div>
 
     <div id="listaPedidos"></div>
     <details class="pedidos-arquivados" id="janelaProntos">
@@ -321,6 +335,11 @@ button:not(.btn-confirmar-estribo){border-radius:10px!important}.btn-confirmar-e
             }); })(),
             estribosProntos:Array.isArray(data.estribosProntos) ? data.estribosProntos : (Array.isArray(data.itens) ? data.itens.filter(item => item?.tipo !== 'outro').map(item => item?.pronto === true || data.pronto === true) : []),
             criadoEm:Number(data.criadoEm) || 0,
+            atualizadoEm:Number(data.atualizadoEm) || 0,
+            atualizadoPor:String(data.atualizadoPor || ''),
+            criadoPor:String(data.criadoPor || ''),
+            numeroPedido:String(data.numeroPedido || ''),
+            historico:Array.isArray(data.historico) ? data.historico : [],
             urgente:data.urgente === true,
             pronto:data.pronto === true,
             entregue:data.entregue === true
@@ -423,7 +442,10 @@ const state = {
   notificarTimer: null,
   notificacoesFila: [],
   prontosExpandidos: false,
-  naoCaixaArame: false
+  naoCaixaArame: false,
+  usuario: null,
+  filtroBusca: '',
+  filtroStatus: 'todos'
 };
 
 const $ = s => document.querySelector(s);
@@ -442,6 +464,35 @@ function etiquetaBitola(material){
   return `<span class="tag-bitola ${classeBitola(material)}">${esc(String(material))} mm</span>`;
 }
 function fmtQtd(n){ return Number(n||0).toLocaleString('pt-BR'); }
+function gerarNumeroPedido(){
+  const agora = new Date();
+  const data = [agora.getFullYear(), String(agora.getMonth()+1).padStart(2,'0'), String(agora.getDate()).padStart(2,'0')].join('');
+  const sufixo = String(agora.getTime()).slice(-6);
+  return `EST-${data}-${sufixo}`;
+}
+function nomeUsuarioAtual(){ return state.usuario?.email || state.usuario?.uid || 'Sistema'; }
+function registrarHistorico(historico, acao){
+  const lista = Array.isArray(historico) ? historico.slice(-49) : [];
+  lista.push({acao, em:Date.now(), por:nomeUsuarioAtual()});
+  return lista;
+}
+function statusPedido(p){
+  if (p.entregue) return 'entregue';
+  if (p.pronto) return 'pronto';
+  if (p.urgente) return 'urgente';
+  return 'produzindo';
+}
+function filtrarPedidos(lista){
+  const busca = String(state.filtroBusca || '').trim().toLowerCase();
+  const status = state.filtroStatus || 'todos';
+  return lista.filter(p => {
+    const texto = `${p.cliente || ''} ${p.numeroPedido || ''}`.toLowerCase();
+    const statusCorresponde = status === 'todos'
+      || statusPedido(p) === status
+      || (status === 'produzindo' && p.urgente && !p.pronto && !p.entregue);
+    return (!busca || texto.includes(busca)) && statusCorresponde;
+  });
+}
 function lerQuantidade(texto){
   const valor = String(texto ?? '').trim().replace(',', '.');
   if (!/^\d+(\.\d+)?$/.test(valor)) return NaN;
@@ -462,8 +513,13 @@ function dataLocalISO(data = new Date()){
   return `${ano}-${mes}-${dia}`;
 }
 function formatarDataISO(valor){
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(valor || ''))) return '';
-  const [ano,mes,dia] = valor.split('-');
+  const correspondencia = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(valor || ''));
+  if (!correspondencia) return '—';
+  const [,ano,mes,dia] = correspondencia;
+  const data = new Date(Date.UTC(Number(ano), Number(mes) - 1, Number(dia)));
+  if (data.getUTCFullYear() !== Number(ano)
+    || data.getUTCMonth() !== Number(mes) - 1
+    || data.getUTCDate() !== Number(dia)) return '—';
   return `${dia}/${mes}/${ano}`;
 }
 function dataEntradaDoPedido(pedido){
@@ -471,7 +527,10 @@ function dataEntradaDoPedido(pedido){
   return pedido.criadoEm ? dataLocalISO(new Date(pedido.criadoEm)) : dataLocalISO();
 }
 function fmtData(ts){
-  const d = new Date(ts);
+  const instante = Number(ts);
+  if (!Number.isFinite(instante) || instante <= 0) return '—';
+  const d = new Date(instante);
+  if (Number.isNaN(d.getTime())) return '—';
   return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
 
@@ -576,6 +635,7 @@ function mostrarErroLogin(mensagem){
   }
 }
 function definirAcesso(user){
+  state.usuario = user || null;
   if (state.pararPedidos){ state.pararPedidos(); state.pararPedidos = null; }
   state.pedidos = [];
   state.role = user
@@ -1082,9 +1142,16 @@ async function confirmarESalvarLancamento(){
     return;
   }
 
+  const agoraAtualizacao = Date.now();
+  const numeroPedido = pedidoAnterior?.numeroPedido || gerarNumeroPedido();
   const dados = {
+    numeroPedido,
     cliente: state.clienteAtual,
-    criadoEm: pedidoAnterior?.criadoEm || Date.now(),
+    criadoEm: pedidoAnterior?.criadoEm || agoraAtualizacao,
+    atualizadoEm: agoraAtualizacao,
+    atualizadoPor: nomeUsuarioAtual(),
+    criadoPor: pedidoAnterior?.criadoPor || nomeUsuarioAtual(),
+    historico: registrarHistorico(pedidoAnterior?.historico, pedidoAnterior ? 'Pedido atualizado' : 'Pedido criado'),
     dataEntrada,
     pretensaoEntrega,
     urgente: $('#urgente').checked,
@@ -1216,6 +1283,16 @@ function ordenar(lista){
 }
 
 /* ============================================================
+   FILTROS
+   ============================================================ */
+$('#filtroPedidosBusca')?.addEventListener('input', event => { state.filtroBusca = event.target.value; render(); });
+$('#filtroPedidosStatus')?.addEventListener('change', event => { state.filtroStatus = event.target.value; render(); });
+$('#limparFiltrosPedidos')?.addEventListener('click', () => {
+  state.filtroBusca = ''; state.filtroStatus = 'todos';
+  $('#filtroPedidosBusca').value = ''; $('#filtroPedidosStatus').value = 'todos'; render();
+});
+
+/* ============================================================
    RENDER — ABA 1
    ============================================================ */
 function render(){
@@ -1228,7 +1305,7 @@ function renderListaPedidos(){
   const ativos = $('#listaPedidos');
   const prontosCont = $('#pedidosProntosLista');
   const entreguesCont = $('#pedidosEntreguesLista');
-  const todos = ordenar(state.pedidos);
+  const todos = filtrarPedidos(ordenar(state.pedidos));
   const ativosLista = todos.filter(p => !p.entregue && !p.pronto);
   const prontos = todos.filter(p => !p.entregue && p.pronto);
   const entregues = todos.filter(p => p.entregue);
@@ -1237,6 +1314,7 @@ function renderListaPedidos(){
     <article class="pedido ${p.entregue ? 'pronto' : (p.pronto ? 'pronto' : (p.urgente ? 'urgente' : 'produzindo'))}">
       <div class="pedido-head">
         <div>
+          ${p.numeroPedido ? `<span class="pedido-codigo">${esc(p.numeroPedido)}</span>` : ''}
           <span class="pedido-cliente">${esc(p.cliente)}</span>
           ${p.urgente ? '<span class="tag-urgente">URGENTE</span>' : ''}
           ${p.entregue ? '<span class="pedido-status pronto">ENTREGUE</span>' : (p.itens.some(i => i.tipo !== 'outro') ? `<span class="pedido-status ${p.pronto ? 'pronto' : 'produzindo'}">${p.pronto ? 'PRONTO' : 'PRODUZINDO'}</span>` : '')}
@@ -1264,6 +1342,8 @@ function renderListaPedidos(){
           </tr>`).join('')}
         </tbody>
       </table>
+      ${p.atualizadoEm ? `<div class="pedido-meta">Última atualização: ${fmtData(p.atualizadoEm)}${p.atualizadoPor ? ` · ${esc(p.atualizadoPor)}` : ''}</div>` : ''}
+      ${Array.isArray(p.historico) && p.historico.length ? `<details class="pedido-historico"><summary>Histórico (${p.historico.length})</summary><ul>${p.historico.slice().reverse().slice(0,10).map(h => `<li>${esc(h.acao || 'Alteração')} — ${fmtData(h.em)}${h.por ? ` · ${esc(h.por)}` : ''}</li>`).join('')}</ul></details>` : ''}
       <div class="pedido-rodape">
         ${p.kg || p.obs ? `<div class="info-extra">${p.kg ? `<b>${fmtKg(p.kg)} kg</b>${p.obs ? ' &nbsp;·&nbsp; ' : ''}` : ''}${p.obs ? `<b>Anotações:</b> ${esc(p.obs)}` : ''}</div>` : ''}
         <div class="pedido-acoes">
