@@ -45,6 +45,9 @@ main.wrap{max-width:1100px;margin:20px auto 0;padding:0 20px 48px}.tab-panel{dis
 
 .btn-nao-caixa{align-self:flex-start;border:1px solid #b91c1c;border-radius:8px;background:#fff;color:#991b1b;padding:8px 12px;font-size:12px;font-weight:800;letter-spacing:.2px}.btn-nao-caixa[aria-pressed="true"]{background:#991b1b;color:#fff;box-shadow:0 0 0 2px #fee2e2}
 
+
+.itens-temp li>span:last-child{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.item-editar{border:1px solid #d1d5db;border-radius:7px;background:#fff;color:#374151;padding:7px 10px;font-size:11px;font-weight:800}.item-apagar-x{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;padding:0!important;border:1px solid #fecaca!important;border-radius:8px!important;background:#fff1f2!important;color:#dc2626!important;font-size:24px!important;line-height:1;font-weight:800!important}.item-apagar-x:hover{background:#fee2e2!important;color:#991b1b!important}
+@media(max-width:899px){.itens-temp li>span:last-child{width:100%;justify-content:flex-end}.item-editar{min-height:34px}.item-apagar-x{min-height:36px}}
 </style>
 </head>
 <body>
@@ -235,12 +238,24 @@ main.wrap{max-width:1100px;margin:20px auto 0;padding:0 20px 48px}.tab-panel{dis
         let primeiraLeitura = true;
         const anteriores = new Map();
         return onSnapshot(collection(db, nomeColecao), snapshot => {
-          const pedidos = snapshot.docs.map(item => ({...item.data(), id:item.id}));
+          const normalizarPedido = item => {
+          const data = item.data() || {};
+          return {
+            ...data,
+            id:item.id,
+            cliente:String(data.cliente || ''),
+            itens:Array.isArray(data.itens) ? data.itens : [],
+            criadoEm:Number(data.criadoEm) || 0,
+            urgente:data.urgente === true,
+            pronto:data.pronto === true
+          };
+        };
+        const pedidos = snapshot.docs.map(normalizarPedido);
           const novos = [];
           const prontosAgora = [];
           if (!primeiraLeitura){
             snapshot.docChanges().forEach(change => {
-              const atual = {...change.doc.data(), id:change.doc.id};
+              const atual = normalizarPedido(change.doc);
               if (change.type === 'added') novos.push(atual);
               if (change.type === 'modified' && atual.pronto === true && anteriores.get(change.doc.id)?.pronto !== true) prontosAgora.push(atual);
             });
@@ -318,6 +333,7 @@ const state = {
   editandoId: null,
   clienteAtual: '',
   itens: [],
+  itemEditandoIndex: null,
   tipoItemAtual: 'estribo',
   role: null,
   pararPedidos: null,
@@ -390,12 +406,16 @@ function pacotesDe(qtd){
    ============================================================ */
 function carregarClientes(){
   try{
-    state.clientes = JSON.parse(localStorage.getItem('estribos.clientes') || '[]');
-    if (!Array.isArray(state.clientes)) state.clientes = [];
+    const clientes = JSON.parse(localStorage.getItem('estribos.clientes') || '[]');
+    state.clientes = Array.isArray(clientes) ? clientes.filter(nome => typeof nome === 'string' && nome.trim()) : [];
   }catch(e){ state.clientes = []; }
 }
 function persistir(){
-  localStorage.setItem('estribos.clientes', JSON.stringify(state.clientes));
+  try{
+    localStorage.setItem('estribos.clientes', JSON.stringify(state.clientes));
+  }catch(error){
+    console.warn('Não foi possível guardar a lista local de clientes:', error);
+  }
 }
 function mostrarNotificacao(titulo, texto, pedido){
   if (document.hidden && 'Notification' in window && Notification.permission === 'granted'){
@@ -480,6 +500,12 @@ function definirAcesso(user){
       : user.uid === 'j4lP0mUvsXdwRGgpKuAejzzYqzz1' ? 'fabrica' : null)
     : null;
   if (!user){
+    state.editandoId = null;
+    state.itemEditandoIndex = null;
+    state.clienteAtual = '';
+    state.itens = [];
+    state.naoCaixaArame = false;
+    limparFormulario();
     document.body.classList.remove('autenticado','role-lancamento','role-fabrica');
     render();
     return;
@@ -768,7 +794,11 @@ function addItem(){
       $('#itemOutroNome').focus();
       return;
     }
-    state.itens.push({tipo:'outro', medida:tela ? tela.medida : '—', material:tela ? 'Tela' : nome, codigo:tela?.codigo || '', bitola:tela?.bitola || '', qtd:quantidade, unidade, caixas, naoCaixa});
+    const itemNovo = {tipo:'outro', medida:tela ? tela.medida : '—', material:tela ? 'Tela' : nome, codigo:tela?.codigo || '', bitola:tela?.bitola || '', qtd:quantidade, unidade, caixas, naoCaixa};
+    if (state.itemEditandoIndex !== null) state.itens[state.itemEditandoIndex] = itemNovo;
+    else state.itens.push(itemNovo);
+    state.itemEditandoIndex = null;
+    $('#btnAddItem').textContent = '+ ADICIONAR';
     $('#itemOutroNome').value = '';
     $('#itemQtd').value = '';
     $('#itemUnidadeBobina').value = 'un';
@@ -794,7 +824,11 @@ function addItem(){
     $('#itemQtd').focus(); return;
   }
 
-  state.itens.push({ tipo:'estribo', medida, material, qtd });
+  const itemNovo = {tipo:'estribo', medida, material, qtd};
+  if (state.itemEditandoIndex !== null) state.itens[state.itemEditandoIndex] = itemNovo;
+  else state.itens.push(itemNovo);
+  state.itemEditandoIndex = null;
+  $('#btnAddItem').textContent = '+ ADICIONAR';
   $('#itemMedida').value = '';
   $('#itemMaterial').value = '';
   $('#itemOutroNome').value = '';
@@ -817,16 +851,56 @@ function renderItensTemp(){
       </span>
       <span style="display:flex;gap:8px;align-items:center">
         ${it.tipo === 'outro' ? '' : `<span class="pac">${pacotesDe(it.qtd)} pct</span>`}
-        <button type="button" class="perigo" data-del="${idx}">Remover</button>
+        <button type="button" class="item-editar" data-edit="${idx}" aria-label="Editar item ${idx + 1}">EDITAR</button>
+        <button type="button" class="item-apagar-x" data-del="${idx}" aria-label="Apagar item ${idx + 1}" title="Apagar">×</button>
       </span>
     </li>`).join('');
 
+  ul.querySelectorAll('[data-edit]').forEach(b => {
+    b.addEventListener('click', () => editarItemTemporario(Number(b.dataset.edit)));
+  });
   ul.querySelectorAll('[data-del]').forEach(b => {
     b.addEventListener('click', () => {
-      state.itens.splice(Number(b.dataset.del), 1);
+      const index = Number(b.dataset.del);
+      state.itens.splice(index, 1);
+      if (state.itemEditandoIndex === index) cancelarEdicaoItemTemporario();
+      else if (state.itemEditandoIndex !== null && state.itemEditandoIndex > index) state.itemEditandoIndex--;
       renderItensTemp();
     });
   });
+}
+function editarItemTemporario(index){
+  const item = state.itens[index];
+  if (!item) return;
+  state.itemEditandoIndex = index;
+  if (item.tipo === 'outro'){
+    state.tipoItemAtual = 'outro';
+    $('#itemOutroNome').value = item.codigo || item.material;
+    $('#itemUnidadeBobina').value = item.unidade || 'un';
+    $('#itemQtd').value = String(item.qtd).replace('.', ',');
+    state.naoCaixaArame = !!item.naoCaixa;
+    selecionarTipoItem('outro');
+    atualizarRegraMaterial();
+    $('#itemOutroNome').focus();
+  } else {
+    selecionarTipoItem('estribo');
+    $('#itemMedida').value = item.medida;
+    $('#itemMaterial').value = item.material.replace('.', ',');
+    $('#itemQtd').value = String(item.qtd);
+    $('#itemMedida').focus();
+  }
+  $('#btnAddItem').textContent = 'ATUALIZAR ITEM';
+}
+function cancelarEdicaoItemTemporario(){
+  state.itemEditandoIndex = null;
+  state.naoCaixaArame = false;
+  $('#btnAddItem').textContent = '+ ADICIONAR';
+  $('#itemMedida').value = '';
+  $('#itemMaterial').value = '';
+  $('#itemOutroNome').value = '';
+  $('#itemQtd').value = '';
+  $('#itemUnidadeBobina').value = 'un';
+  atualizarRegraMaterial();
 }
 
 /* ============================================================
@@ -855,6 +929,7 @@ function montarResumoConfirmacao(){
 
 $('#btnSalvar').addEventListener('click', async () => {
   if (!confirmarClienteDigitado()) return;
+  if (state.itemEditandoIndex !== null){ alert('Atualize ou apague o item que está sendo editado antes de lançar o pedido.'); return; }
   if (!state.itens.length){ alert('Adicione pelo menos 1 item (medida, material e quantidade).'); return; }
   const dataEntrada = $('#dataEntradaPedido').value;
   const pretensaoEntrega = $('#pretensaoEntrega').value;
@@ -880,9 +955,13 @@ $('#confirmarLancamentoBtn').addEventListener('click', async () => {
 });
 async function confirmarESalvarLancamento(){
   if (!confirmarClienteDigitado()) return false;
+  if (state.itemEditandoIndex !== null){
+    alert('Atualize ou apague o item que está sendo editado antes de lançar o pedido.');
+    return false;
+  }
   if (!state.itens.length){
     alert('Adicione pelo menos 1 item (medida, material e quantidade).');
-    return;
+    return false;
   }
 
   const pedidoAnterior = state.editandoId
@@ -934,13 +1013,15 @@ async function confirmarESalvarLancamento(){
   } catch(error) {
     console.error('Falha ao salvar pedido:', error);
     const detalhe = [error?.code, error?.message].filter(Boolean).join(' — ');
-    alert('Não foi possível salvar o pedido neste navegador.' + (detalhe ? '\n\nDetalhe: ' + detalhe : ''));
+    alert('Não foi possível salvar o pedido no Firebase.' + (detalhe ? '\n\nDetalhe: ' + detalhe : ''));
     return false;
   }
 }
 
 function limparFormulario(){
   state.editandoId = null;
+  state.itemEditandoIndex = null;
+  $('#btnAddItem').textContent = '+ ADICIONAR';
   state.clienteAtual = '';
   state.itens = [];
   ocultarSugestoesCliente();
@@ -971,6 +1052,8 @@ function editarPedido(id){
   const p = state.pedidos.find(x => x.id === id);
   if (!p) return;
   state.editandoId = id;
+  state.itemEditandoIndex = null;
+  $('#btnAddItem').textContent = '+ ADICIONAR';
   state.clienteAtual = p.cliente;
   state.itens = p.itens.map(i => ({...i}));
   $('#urgente').checked = !!p.urgente;
@@ -1130,7 +1213,7 @@ function renderFabrica(){
 
   const urgentes = emProducao.filter(p => p.urgente);
   const regulares = emProducao.filter(p => !p.urgente);
-  const listaEmProducao = regulares.concat(urgentes);
+  const listaEmProducao = regulares;
   $('#fabricaResumo').innerHTML = `
     <div class="resumo-box"><span>1 · PRODUZINDO</span><strong>${regulares.length}</strong></div>
     <div class="resumo-box"><span>2 · URGENTES</span><strong>${urgentes.length}</strong></div>
