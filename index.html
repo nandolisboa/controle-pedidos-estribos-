@@ -76,8 +76,18 @@ main.wrap{max-width:1100px;margin:20px auto 0;padding:0 20px 48px}.tab-panel{dis
 
 .btn-confirmar-estribo{min-height:34px;padding:6px 8px;border:1px solid #d1d5db;border-radius:7px;background:#fff;color:#374151;font-size:10px;font-weight:800;white-space:nowrap}.btn-confirmar-estribo.confirmado{border-color:#86efac;background:#f0fdf4;color:#166534}.estribo-confirmado td{background:#f5fcf7}.fabrica-progresso{font-size:11px;color:#6b7280;font-weight:700}
 
-.fabrica-tabla-scroll{width:100%;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch}.fabrica-card .btn-confirmar-estribo{min-width:108px}
-@media(max-width:899px){.fabrica-card .fabrica-tabla-scroll table.tabela{min-width:540px!important;table-layout:fixed!important}.fabrica-card .fabrica-tabla-scroll table.tabela th:last-child,.fabrica-card .fabrica-tabla-scroll table.tabela td:last-child{width:122px!important;text-align:center!important}}
+.fabrica-card .btn-confirmar-estribo{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:10px;height:10px;min-width:10px;min-height:10px;padding:0;border:1px solid #9ca3af;border-radius:2px;background:#fff;color:#fff;font-size:8px;line-height:8px;font-weight:900;vertical-align:middle}.fabrica-card .btn-confirmar-estribo.confirmado{border-color:#16844a;background:#16844a;color:#fff}.fabrica-card .btn-confirmar-estribo:focus-visible{outline:2px solid #86efac;outline-offset:1px}
+
+
+.fabrica-card table.fabrica-tabela-estribos{width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px}.fabrica-card table.fabrica-tabela-estribos th,.fabrica-card table.fabrica-tabela-estribos td{padding:7px 4px;white-space:normal;overflow-wrap:anywhere}.fabrica-card table.fabrica-tabela-estribos th:nth-child(1),.fabrica-card table.fabrica-tabela-estribos td:nth-child(1){width:27%}.fabrica-card table.fabrica-tabela-estribos th:nth-child(2),.fabrica-card table.fabrica-tabela-estribos td:nth-child(2){width:22%}.fabrica-card table.fabrica-tabela-estribos th:nth-child(3),.fabrica-card table.fabrica-tabela-estribos td:nth-child(3){width:37%}.fabrica-card table.fabrica-tabela-estribos th:nth-child(4),.fabrica-card table.fabrica-tabela-estribos td:nth-child(4){width:14%;text-align:center!important}.fabrica-card table.fabrica-tabela-estribos .tag-bitola{white-space:nowrap;font-size:11px}
+@media(max-width:380px){.fabrica-card table.fabrica-tabela-estribos{font-size:11px}.fabrica-card table.fabrica-tabela-estribos th,.fabrica-card table.fabrica-tabela-estribos td{padding:6px 2px}.fabrica-card table.fabrica-tabela-estribos .tag-bitola{font-size:10px}}
+
+@media(max-width:899px){.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos{width:100%!important;min-width:0!important;table-layout:fixed!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos th,.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos td{white-space:normal!important;word-break:normal!important;overflow-wrap:anywhere!important;min-width:0!important;padding:7px 2px!important;font-size:12px!important;line-height:1.2!important;vertical-align:middle!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos th:nth-child(1),.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos td:nth-child(1){width:23%!important;text-align:left!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos th:nth-child(2),.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos td:nth-child(2){width:19%!important;text-align:left!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos th:nth-child(3),.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos td:nth-child(3){width:40%!important;text-align:right!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos th:nth-child(4),.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos td:nth-child(4){width:18%!important;text-align:center!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos th.confirma-col{white-space:nowrap!important;font-size:12px!important;text-align:center!important;padding-left:0!important;padding-right:0!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos th:nth-child(3){white-space:nowrap!important;font-size:12px!important;line-height:1.2!important;text-align:right!important;padding-right:5px!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos td:nth-child(3){white-space:nowrap!important;font-size:12px!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos .tag-bitola{font-size:12px!important;white-space:nowrap!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos .btn-confirmar-estribo{margin:0 auto!important}}
+
+@media(max-width:899px){.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos th:nth-child(3){text-align:right!important;padding-right:5px!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos td:nth-child(3){padding-right:5px!important}.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos th.confirma-col,.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos td.confirma-col{text-align:center!important}.etapa-fabrica .fabrica-card .btn-confirmar-estribo{display:flex!important;margin:0 auto!important}.fabrica-progresso{justify-content:center!important;margin-top:12px!important}.fabrica-progresso .btn-confirmar-pedido-pronto{width:min(100%,360px);min-height:44px;padding:11px 16px;border-radius:9px;font-size:14px;line-height:1.2;white-space:normal}}
+
+/* CANTOS PADRONIZADOS EM TODOS OS BOTÕES; checkbox de produção preserva formato quadrado. */
+button:not(.btn-confirmar-estribo){border-radius:10px!important}.btn-confirmar-estribo{border-radius:2px!important}
 </style>
 </head>
 <body>
@@ -342,9 +352,9 @@ main.wrap{max-width:1100px;margin:20px auto 0;padding:0 20px 48px}.tab-panel{dis
         if (hasFactoryMirror) batch.update(doc(db, 'fabricaPedidos', id), data);
         await batch.commit();
       },
-      updateItemProgress: async (id, estribosProntos, pronto, prontoEm) => {
+      updateItemProgress: async (id, estribosProntos, retirarDePronto = false) => {
         const batch = writeBatch(db);
-        const atualizacao = {estribosProntos, pronto, prontoEm};
+        const atualizacao = retirarDePronto ? {estribosProntos,pronto:false,prontoEm:null} : {estribosProntos};
         batch.update(doc(db, 'pedidos', id), atualizacao);
         batch.update(doc(db, 'fabricaPedidos', id), atualizacao);
         await batch.commit();
@@ -1258,14 +1268,14 @@ function renderFabrica(){
         ${p.pretensaoEntrega ? `<div><b>Entrega pretendida:</b> ${formatarDataISO(p.pretensaoEntrega)}</div>` : ''}
       </div>
       ${p.obs ? `<div class="fabrica-obs"><b>Anotações:</b> ${esc(p.obs)}</div>` : ''}
-      <div class="fabrica-tabla-scroll"><table class="tabela">
-        <thead><tr><th>Medida</th><th>Material</th><th class="num">Peças</th><th class="num">Pacotes</th><th>Confirmação</th></tr></thead>
+      <table class="tabela fabrica-tabela-estribos">
+        <thead><tr><th>Medida</th><th>Bitola</th><th class="num">Peças/pct</th><th class="confirma-col">Pronto</th></tr></thead>
         <tbody>${p.itens.filter(i => i.tipo !== 'outro').map((i,indice) => `
-          <tr class="${i.pronto ? 'estribo-confirmado' : ''}"><td><b>${esc(i.medida)}</b></td><td>${etiquetaBitola(i.material)}</td><td class="num">${fmtQtd(i.qtd)}</td><td class="num"><b>${pacotesDe(i.qtd)}</b></td><td><button type="button" class="btn-confirmar-estribo ${i.pronto ? 'confirmado' : ''}" data-action="item-status" data-id="${esc(p.id)}" data-item-index="${indice}" aria-pressed="${i.pronto ? 'true' : 'false'}">${i.pronto ? '✓ PRONTO' : 'CONFIRMAR PRONTO'}</button></td></tr>`).join('')}
+          <tr class="${i.pronto ? 'estribo-confirmado' : ''}"><td><b>${esc(i.medida)}</b></td><td>${etiquetaBitola(i.material)}</td><td class="num">${fmtQtd(i.qtd)} / <b>${pacotesDe(i.qtd)}</b></td><td class="confirma-col"><button type="button" class="btn-confirmar-estribo ${i.pronto ? 'confirmado' : ''}" data-action="item-status" data-id="${esc(p.id)}" data-item-index="${indice}" aria-label="${i.pronto ? 'Desmarcar estribo pronto' : 'Marcar estribo pronto'}" aria-pressed="${i.pronto ? 'true' : 'false'}" title="${i.pronto ? 'Pronto' : 'Marcar como pronto'}">${i.pronto ? '✓' : ''}</button></td></tr>`).join('')}
         </tbody>
-      </table></div>
+      </table>
       ${p.kg ? `<div class="fabrica-totais"><div><span>KG</span><strong>${fmtKg(p.kg)}</strong></div></div>` : ''}
-      <div class="fabrica-acoes fabrica-progresso">${p.pronto ? 'TODOS OS ESTRIBOS CONFIRMADOS · PEDIDO PRONTO' : 'CONFIRME CADA ESTRIBO. O PEDIDO FICA PRONTO QUANDO TODOS FOREM MARCADOS.'}</div>
+      <div class="fabrica-acoes fabrica-progresso">${p.pronto ? 'PEDIDO CONFIRMADO COMO PRONTO.' : ((p.estribosProntos || p.itens.filter(i => i.tipo !== 'outro').map(i => i.pronto === true)).length > 0 && (p.estribosProntos || p.itens.filter(i => i.tipo !== 'outro').map(i => i.pronto === true)).every(Boolean) ? `<button type="button" class="sucesso btn-confirmar-pedido-pronto" data-action="confirm-order-ready" data-id="${esc(p.id)}">CONFIRMAR PEDIDO PRONTO</button>` : 'MARQUE CADA ESTRIBO. QUANDO TODOS ESTIVEREM MARCADOS, CONFIRME O PEDIDO.')}</div>
     </article>`;
 
   const desenharEtapa = (numero, titulo, lista) => `
@@ -1337,21 +1347,33 @@ async function confirmarEstriboPronto(id, indice){
   const pedido = state.pedidos.find(item => item.id === id);
   if (!pedido || state.role !== 'fabrica') return;
   const estribos = pedido.itens.filter(atual => atual.tipo !== 'outro');
-  const item = estribos[indice];
-  if (!item) return;
+  if (!estribos[indice]) return;
   const estribosProntos = estribos.map((atual,i) => i === indice ? !Boolean(pedido.estribosProntos?.[i] ?? atual.pronto) : Boolean(pedido.estribosProntos?.[i] ?? atual.pronto));
-  const pronto = estribosProntos.length > 0 && estribosProntos.every(Boolean);
-  const prontoEm = pronto ? (pedido.pronto ? (pedido.prontoEm || Date.now()) : Date.now()) : null;
-  try{ await window.firebaseApi.updateItemProgress(id,estribosProntos,pronto,prontoEm); }
+  const retirarDePronto = pedido.pronto === true && !estribosProntos.every(Boolean);
+  try{ await window.firebaseApi.updateItemProgress(id,estribosProntos,retirarDePronto); }
   catch(error){
     console.error('Falha ao confirmar estribo:',error);
     alert('Não foi possível atualizar a confirmação do estribo. Confira a conexão e as regras do Firestore.');
   }
 }
+async function confirmarPedidoPronto(id){
+  const pedido = state.pedidos.find(item => item.id === id);
+  if (!pedido || state.role !== 'fabrica' || pedido.pronto) return;
+  const estribos = pedido.itens.filter(item => item.tipo !== 'outro');
+  const marcados = pedido.estribosProntos || estribos.map(item => item.pronto === true);
+  if (!estribos.length || marcados.length !== estribos.length || !marcados.every(Boolean)) return;
+  try{ await window.firebaseApi.updateStatus(id,{pronto:true,prontoEm:Date.now()}); }
+  catch(error){
+    console.error('Falha ao confirmar pedido pronto:',error);
+    alert('Não foi possível confirmar o pedido. Confira a conexão e as regras do Firestore.');
+  }
+}
 
 $('#fabricaLista').addEventListener('click', event => {
+  const botaoPedido = event.target.closest('button[data-action="confirm-order-ready"][data-id]');
+  if (botaoPedido){ confirmarPedidoPronto(botaoPedido.dataset.id); return; }
   const itemBotao = event.target.closest('button[data-action="item-status"][data-id][data-item-index]');
-  if (itemBotao){ confirmarEstriboPronto(itemBotao.dataset.id, Number(itemBotao.dataset.itemIndex)); return; }
+  if (itemBotao) confirmarEstriboPronto(itemBotao.dataset.id, Number(itemBotao.dataset.itemIndex));
 });
 
 /* ============================================================
