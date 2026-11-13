@@ -113,12 +113,129 @@ body.autenticado.role-fabrica #tab-mlivre,body.autenticado.role-fabrica .app-tab
 .tag-mlivre{display:inline-flex;align-items:center;margin:0 5px 0 0;padding:5px 9px;border-radius:99px;background:#6d28d9;color:#fff;font-size:11px;font-weight:900;letter-spacing:.5px}
 body.modo-mlivre #campoClienteNormal,body.modo-mlivre .tipo-item-botoes,body.modo-mlivre #campoOutroNome,body.modo-mlivre #campoUnidadeBobina,body.modo-mlivre #campoUrgente,body.modo-mlivre #campoBitola{display:none!important}
 body.modo-mlivre #campoBitolaMLivre{display:flex!important}
-body.modo-mlivre #campoClienteFixado{display:flex!important;grid-column:1/-1}
 body.modo-mlivre #campoDataEntrada,body.modo-mlivre #campoLimiteHora{grid-column:span 1}
 body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130px,1fr) auto}
 @media(max-width:899px){.tabs.app-tabs{gap:3px}.app-tab{padding:9px 5px!important;font-size:11px!important;line-height:1.1}.app-tab[data-tab=mlivre],.app-tab[data-tab=fabrica-mlivre]{font-size:10px!important}body.modo-mlivre .item-form{grid-template-columns:1fr 1fr}body.modo-mlivre #campoMedida,body.modo-mlivre #campoQtd,body.modo-mlivre #btnAddItem{grid-column:1/-1}}
 @media(prefers-reduced-motion:reduce){#btnFabricaMLivre.tem-pendentes,.app-tab[data-tab=mlivre].mlivre-visto-pendente{animation:none!important}}
 
+
+/* Ajustes oficiais portados do layout local aprovado — sem alterar autenticação ou Firebase. */
+.etapa-fabrica{min-width:0;background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:12px}
+.etapa-fabrica-titulo{display:flex;align-items:center;gap:9px;margin-bottom:11px;padding:2px 2px 10px;border-bottom:1px solid var(--line)}
+.etapa-fabrica-titulo h2{flex:1;margin:0;font-size:17px}
+.etapa-numero{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#fef2f2;color:var(--red-dark);font-weight:800}
+.etapa-contador{min-width:26px;padding:4px 7px;border-radius:99px;background:#fff;border:1px solid var(--line);text-align:center;font-size:12px;font-weight:700}
+.etapa-fabrica-lista{display:grid;gap:10px}
+.fabrica-etapa-janela{min-width:0;background:#f9fafb;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.fabrica-etapa-janela>summary{display:flex;align-items:center;gap:10px;min-height:58px;padding:12px 15px;list-style:none;cursor:pointer;font-weight:800;color:#1f2937}
+.fabrica-etapa-janela>summary::-webkit-details-marker{display:none}
+.fabrica-etapa-janela>summary:after{content:'＋';margin-left:auto;color:var(--muted);font-size:20px}
+.fabrica-etapa-janela[open]>summary:after{content:'−'}
+.fabrica-etapa-janela>.etapa-fabrica-lista{padding:0 12px 12px}
+.fabrica-etapa-janela[open]>summary{border-bottom:1px solid var(--line)}
+.fabrica-producao-conteudo{display:grid;gap:14px;padding:12px}
+.fabrica-subetapa{min-width:0;border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px}
+.fabrica-subetapa>h3{display:flex;align-items:center;gap:9px;margin:0 0 10px;font-size:14px}
+.fabrica-subetapa>h3 strong{flex:1}
+.fabrica-urgentes-fora{margin:0 0 14px;padding:12px;border:1px solid #f3c8cc;border-radius:14px;background:#fffafa}
+.fabrica-urgentes-fora>h2{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding:2px 2px 9px;border-bottom:1px solid #f3d8da;font-size:15px}
+.fabrica-urgentes-fora .fabrica-card.urgente{animation:alertaUrgenteBorda 1.15s ease-in-out infinite!important}
+.etapa-prontos-recolhida{border:1px solid var(--line);border-radius:12px;background:#f9fafb;overflow:hidden}
+.etapa-prontos-recolhida>summary{display:flex;align-items:center;gap:10px;min-height:54px;padding:10px 14px;cursor:pointer;list-style:none;font-weight:800;color:#374151}
+.etapa-prontos-recolhida>summary::-webkit-details-marker{display:none}
+.etapa-prontos-recolhida>summary:after{content:'＋';margin-left:auto;color:var(--muted);font-size:17px}
+.etapa-prontos-recolhida[open]>summary:after{content:'−'}
+.pronto-numero{background:#dcfce7;color:#166534}.titulo-prontos{flex:1}.lista-prontos{padding:0 12px 12px}
+@keyframes fabricaMLivreBorda{0%,100%{border-color:#ca8a04;box-shadow:0 0 0 0 #facc1500}50%{border-color:#eab308;box-shadow:0 0 0 3px #facc1566}}
+#btnFabricaMLivre.tem-pendentes{border:2px solid #ca8a04!important;animation:fabricaMLivreBorda .9s ease-in-out infinite!important}
+#btnFabricaMLivre.tem-pendentes.active{background:#fff0f2!important;color:#ad1829!important}
+@keyframes fabricaUrgenteBorda{0%,100%{border-color:#f3c8cc;box-shadow:0 0 0 0 #fda4af00}50%{border-color:#dc2626;box-shadow:0 0 0 3px #fda4af66}}
+.app-tab[data-tab=fabrica].urgente-pendente{border:2px solid #f3c8cc!important;animation:fabricaUrgenteBorda 1s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){#btnFabricaMLivre.tem-pendentes,.app-tab[data-tab=mlivre].mlivre-visto-pendente,.app-tab[data-tab=fabrica].urgente-pendente{animation:none!important}}
+@media(max-width:1023px){
+ .tabs.app-tabs{gap:3px}.app-tab{padding:9px 5px!important;font-size:11px!important;line-height:1.1}
+ .pedido table.tabela{display:table!important;width:100%!important;min-width:0!important;table-layout:fixed!important}
+ .pedido table.tabela th,.pedido table.tabela td{min-width:0!important;white-space:normal!important;overflow-wrap:anywhere!important;padding:8px 4px!important}
+ .etapa-fabrica .fabrica-card table.fabrica-tabela-estribos{width:100%!important;min-width:0!important;table-layout:fixed!important}
+ .etapa-fabrica .fabrica-card table.fabrica-tabela-estribos th,.etapa-fabrica .fabrica-card table.fabrica-tabela-estribos td{white-space:normal!important;overflow-wrap:anywhere!important;min-width:0!important;padding:7px 2px!important;font-size:12px!important;line-height:1.2!important}
+ .fabrica-progresso .btn-confirmar-pedido-pronto{width:min(100%,360px);min-height:44px;white-space:normal}
+}
+
+/* PAINEL DE RESUMO E CONSULTA DE STATUS */
+.onspace-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 16px}
+.onspace-stat{position:relative;display:block;min-width:0;width:100%;min-height:84px;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);text-align:left;cursor:pointer;box-shadow:var(--shadow)}
+.onspace-stat>span{display:block;font-size:10px;letter-spacing:.4px;font-weight:800;color:var(--muted)}
+.onspace-stat>b{display:block;margin-top:8px;font-size:24px;line-height:1.05}
+.stat-icon{position:absolute;right:12px;top:12px;width:25px;height:25px;border-radius:8px;display:grid;place-items:center;font-style:normal;font-size:13px}
+.stat-icon.amber{background:#fff7e7;color:#a96d05}.stat-icon.green{background:#eaf7f1;color:#198251}.stat-icon.gray{background:#f0f1f3;color:#687382}.stat-icon.red{background:#fff0f1;color:#be1428}
+.onspace-stat[data-stat-action="urgente"].urgente-pendente{border-color:#f3c8cc;background:#fffafa}
+.pedidos-status-dialog{position:fixed;inset:0;box-sizing:border-box;width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;padding:16px;border:0;border-radius:0;background:#f7f8fa;color:var(--ink);overflow:auto}
+.pedidos-status-dialog::backdrop{background:#10182888;backdrop-filter:blur(2px)}
+.pedidos-status-cabecalho{position:sticky;top:-16px;z-index:2;display:flex;justify-content:space-between;align-items:center;margin:-16px -16px 14px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--line)}
+.pedidos-status-cabecalho h2{margin:0;font-size:17px}
+#fecharPedidosStatus{width:38px;height:38px;padding:0;border:1px solid var(--line);border-radius:10px;background:#fff;color:#374151;font-size:25px;line-height:1}
+#pedidosStatusConteudo{width:min(1100px,100%);margin:0 auto}
+#pedidosStatusConteudo .pedido{margin-bottom:10px;background:#fff}
+.pedidos-status-vazio{padding:24px 12px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:12px}
+@media(max-width:899px){.onspace-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.onspace-stat{min-height:72px;padding:11px}.onspace-stat>span{font-size:9px}.onspace-stat>b{font-size:21px}.pedidos-status-dialog{padding:10px}.pedidos-status-cabecalho{top:-10px;margin:-10px -10px 10px;padding:9px 10px}}
+@media print{.onspace-stats,.pedidos-status-dialog{display:none!important}}
+
+/* PAINEL OPERACIONAL — adaptação do layout aprovado, sem controles de demonstração. */
+@media screen {
+ :root{--bg:#f1f2f4;--ink:#1b2431;--muted:#657080;--line:#e3e5e9;--red:#be1428;--red-dark:#991125;--shadow:0 1px 2px rgba(20,28,40,.04)}
+ html,body{background:#f1f2f4;color:#1b2431}
+ .onspace-topbar{height:72px;position:fixed;z-index:45;top:0;left:232px;right:0;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:16px}
+ .onspace-crumb{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.6px;color:#657080;font-weight:700}.onspace-crumb b{font-size:17px;color:#9aa2ad}.onspace-crumb strong{color:#1b2431}
+ .onspace-top-actions{display:flex;align-items:center;gap:12px}.onspace-date{font-size:10px;color:#657080;white-space:nowrap}.onspace-pdf{height:40px;padding:0 14px;background:#fff;border:1px solid #e0e3e7;border-radius:10px;color:#26303d;font-size:10px;font-weight:800;white-space:nowrap}
+ body.autenticado .topo{position:fixed;left:0;top:0;bottom:0;width:232px;z-index:50;display:flex;flex-direction:column;background:#fff;border-right:1px solid #e1e3e7;box-shadow:none}
+ body.autenticado .topo-inner{width:100%;max-width:none;min-height:82px;padding:20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #e9eaed}
+ body.autenticado .wordmark{font-size:17px!important;letter-spacing:-.4px!important}body.autenticado #btnSair{font-size:9px;padding:6px 8px;background:#fff}
+ body.autenticado .tabs.app-tabs{width:100%;max-width:none;display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:22px 15px}
+ body.autenticado .tabs.app-tabs:before{content:'PAINEL DE OPERAÇÃO';font-size:9px;letter-spacing:1.4px;font-weight:900;color:#687382;padding:8px 12px 11px}
+ body.autenticado .app-tab{width:100%;min-width:0;text-align:left;padding:13px 12px!important;background:transparent;color:#586473;font-size:11px!important;line-height:1.3;font-weight:900;box-shadow:none;border-radius:10px}
+ body.autenticado .app-tab.active{background:#fff0f2;color:#b9182c;box-shadow:none}
+ body.autenticado main.wrap{max-width:none;margin:0 0 0 232px;padding:96px 28px 54px}
+ body.autenticado #tab-pedidos.active{display:grid;grid-template-columns:minmax(290px,350px) minmax(0,1fr);align-items:start;column-gap:20px}
+ body.autenticado #resumoPedidos{grid-column:1/-1;grid-row:1}
+ body.autenticado #formCardHome{grid-column:1;grid-row:2 / span 6;min-width:0}
+ body.autenticado #formCardHome .card{padding:18px;border:1px solid #e3e5e9;border-radius:13px;box-shadow:0 1px 2px #141c2806}
+ body.autenticado #formCardHome .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+ body.autenticado #formCardHome .cliente-autocomplete{grid-column:1/-1}
+ body.autenticado #formCardHome .item-form{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ body.autenticado #formCardHome .item-form>button{grid-column:1/-1}
+ body.autenticado #tab-pedidos>.secao-titulo,body.autenticado #tab-pedidos>.pedidos-filtros,body.autenticado #tab-pedidos>#listaPedidos,body.autenticado #tab-pedidos>#janelaProntos,body.autenticado #tab-pedidos>#janelaEntregues{grid-column:2;min-width:0}
+ body.autenticado #tab-pedidos>.secao-titulo{grid-row:2;margin:0 0 9px;min-height:28px}body.autenticado #tab-pedidos>.secao-titulo h2{font-size:15px}body.autenticado #tab-pedidos>.secao-titulo #btnPDFGeral{display:none}
+ body.autenticado #tab-pedidos>.pedidos-filtros{grid-row:3;display:grid;grid-template-columns:minmax(0,1fr) 155px auto;gap:7px;margin:0 0 12px;padding:10px;background:#fff;border:1px solid #e3e5e9;border-radius:11px}
+ body.autenticado #tab-pedidos>.pedidos-filtros input,body.autenticado #tab-pedidos>.pedidos-filtros select{height:40px;min-height:40px;font-size:10px}
+ body.autenticado #tab-pedidos>#listaPedidos{grid-row:4}
+ body.autenticado #tab-pedidos>#janelaProntos{grid-row:5}body.autenticado #tab-pedidos>#janelaEntregues{grid-row:6}
+ .pedido,.fabrica-card,.card,.pedidos-arquivados,.resumo-box{box-shadow:0 1px 2px #141c2806;border-color:#e3e5e9;border-radius:12px}
+ .pedido{padding:14px}.pedido-cliente,.fabrica-cliente{color:#1b2431}
+ .primario,.sucesso{background:#be1428;border-color:#be1428}.primario:hover,.sucesso:hover{background:#991125}
+ #fabricaResumo{display:none!important}
+}
+@media(max-width:899px){
+ .onspace-topbar{position:static;left:auto;right:auto;height:auto;min-height:52px;padding:8px 13px;flex-wrap:wrap}.onspace-crumb{font-size:8px;gap:6px}.onspace-top-actions{gap:7px}.onspace-date{font-size:8px}.onspace-pdf{height:33px;padding:0 9px;font-size:8px}
+ body.autenticado .topo{position:sticky;top:0;width:auto;display:block;border-right:0;border-bottom:1px solid #e1e3e7}
+ body.autenticado .topo-inner{min-height:56px;padding:10px 14px;max-width:none}
+ body.autenticado .tabs.app-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:7px 10px}
+ body.autenticado .app-tab{padding:9px 7px!important;text-align:center;font-size:10px!important}
+ body.autenticado main.wrap{margin:0 auto;max-width:720px;padding:14px 12px 36px}
+ body.autenticado #tab-pedidos.active{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+ body.autenticado #resumoPedidos,body.autenticado #formCardHome,body.autenticado #tab-pedidos>.secao-titulo,body.autenticado #tab-pedidos>.pedidos-filtros,body.autenticado #tab-pedidos>#listaPedidos,body.autenticado #tab-pedidos>#janelaProntos,body.autenticado #tab-pedidos>#janelaEntregues{grid-column:1;grid-row:auto}
+ body.autenticado #resumoPedidos{margin-bottom:12px}body.autenticado #formCardHome{margin-bottom:13px}
+ body.autenticado #tab-pedidos>.pedidos-filtros{grid-template-columns:1fr;margin-bottom:11px}
+}
+@media(max-width:400px){.onspace-date{display:none}.onspace-crumb{font-size:7px}.onspace-pdf{padding:0 7px}}
+@media print{.onspace-topbar{display:none!important}}
+
+/* Approved urgent and M.LIVRE packing controls */
+.urgente-toggle{width:100%;display:flex!important;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:12px 16px;border:1px solid #e5e7eb;border-radius:14px;background:linear-gradient(180deg,#fff 0%,#f9fafb 100%);color:#596575;font-size:12px;font-weight:850;letter-spacing:.45px;cursor:pointer;box-shadow:0 2px 0 #e5e7eb,0 5px 12px rgba(31,41,55,.06);transition:transform .14s ease,box-shadow .14s ease,background .18s ease,color .18s ease,border-color .18s ease}.urgente-toggle:hover{border-color:#fecdd3;background:#fffafa;color:#9f172a}.urgente-toggle:active{transform:translateY(2px) scale(.99);box-shadow:0 0 0 #e5e7eb,inset 0 2px 5px rgba(31,41,55,.12)}.urgente-toggle.urgente-ativo{background:linear-gradient(180deg,#fff7f7 0%,#ffe9eb 100%);border-color:#f3b1b8;color:#ad1829;box-shadow:0 2px 0 #e9b7bc,0 5px 12px rgba(220,38,38,.10)}.urgente-toggle.urgente-ativo .urgente-icone{background:#fce3e6;color:#b42335}.urgente-toggle.urgente-ativo:active{transform:translateY(2px) scale(.99);box-shadow:0 0 0 #e9b7bc,inset 0 2px 5px rgba(160,20,40,.12)}.urgente-toggle:focus-visible{outline:2px solid #fecaca;outline-offset:2px}.urgente-toggle span{white-space:nowrap}.urgente-icone{display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:#f3f4f6;color:#7b8491;font-size:15px;font-weight:900;line-height:1}.mlivre-embalar{display:flex;align-items:center;gap:9px;width:max-content;max-width:100%;margin:0 0 12px;padding:9px 12px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;color:#4b5563;font-size:12px;font-weight:800;cursor:pointer}.mlivre-embalar[hidden]{display:none!important}.mlivre-embalar input{width:17px;min-height:17px;height:17px;margin:0;accent-color:#be1428}.mlivre-embalar.ativo{border-color:#f3b1b8;background:#fff3f4;color:#a7192d}.mlivre-casa{display:grid;place-items:center;width:23px;height:23px;border-radius:7px;background:#f3f4f6;color:#657080;font-size:17px;font-weight:900}.mlivre-embalar.ativo .mlivre-casa{background:#ffe1e5;color:#ad1829}.mlivre-embalar{grid-column:1/-1}.mlivre-embalar{position:relative;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;padding:12px 16px;border:1px solid #e5e7eb;border-radius:14px;background:linear-gradient(180deg,#fff 0%,#f9fafb 100%);color:#596575;font-size:12px;font-weight:850;letter-spacing:.45px;box-shadow:0 2px 0 #e5e7eb,0 5px 12px rgba(31,41,55,.06);transition:transform .14s ease,box-shadow .14s ease,background .18s ease,color .18s ease,border-color .18s ease}.mlivre-embalar:hover{border-color:#fecdd3;background:#fffafa;color:#9f172a}.mlivre-embalar:active{transform:translateY(2px) scale(.99);box-shadow:inset 0 2px 5px rgba(31,41,55,.12)}.mlivre-embalar input{position:absolute!important;width:1px!important;height:1px!important;min-height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;opacity:0!important}.mlivre-embalar:focus-within{outline:2px solid #fecaca;outline-offset:2px}.mlivre-embalar.ativo{border-color:#f3b1b8;background:linear-gradient(180deg,#fff7f7 0%,#ffe9eb 100%);color:#ad1829;box-shadow:0 2px 0 #e9b7bc,0 5px 12px rgba(220,38,38,.10)}.mlivre-embalar.ativo:active{transform:translateY(2px) scale(.99);box-shadow:inset 0 2px 5px rgba(160,20,40,.12)}.mlivre-casa{background:#f3f4f6;color:#7b8491}.mlivre-embalar.ativo .mlivre-casa{background:#fce3e6;color:#b42335}
+.campo-anotacoes-salvar{grid-column:1/-1;min-width:0}.campo-anotacoes-salvar textarea{min-height:64px;resize:vertical}
+.mlivre-embalar{grid-column:1/-1}
+body.modo-mlivre .item-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
+@media(max-width:899px){body.modo-mlivre .item-form{grid-template-columns:1fr 1fr}body.modo-mlivre #campoMedida,body.modo-mlivre #campoQtd,body.modo-mlivre #campoAnotacoesPedido,body.modo-mlivre #btnAddItem{grid-column:1/-1}}
+#btnFabricaMLivre.tem-pendentes.active{background:#fff0f2!important;color:#ad1829!important}
 </style>
 </head>
 <body>
@@ -155,6 +272,10 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
     <button class="app-tab" data-tab="fabrica-mlivre" id="btnFabricaMLivre" type="button">FÁBRICA M.LIVRE</button>
   </nav>
 </header>
+<div class="onspace-topbar" role="region" aria-label="Cabeçalho do sistema">
+  <div class="onspace-crumb"><span>GESTÃO DE PEDIDOS</span><b>›</b><strong id="firebaseBreadcrumb">LANÇAMENTOS</strong></div>
+  <div class="onspace-top-actions"><span class="onspace-date"><span aria-hidden="true">▦</span> <span id="firebaseDate"></span></span><button type="button" class="onspace-pdf" id="firebasePdf">⇩ &nbsp; EXPORTAR PDF</button></div>
+</div>
 
 <main class="wrap">
   <div class="notificacao-fabrica" role="status" aria-live="polite">
@@ -166,16 +287,22 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
   </div>
 <!-- ===================== ABA 1 ===================== -->
   <section id="tab-pedidos" class="tab-panel active">
+    <div class="onspace-stats" id="resumoPedidos" role="region" aria-label="Resumo dos pedidos">
+      <button type="button" class="onspace-stat" data-stat-action="produzindo"><span>EM PRODUÇÃO</span><b data-count="produzindo">00</b><i class="stat-icon amber" aria-hidden="true">▤</i></button>
+      <button type="button" class="onspace-stat" data-stat-action="pronto"><span>PRONTOS</span><b data-count="prontos">00</b><i class="stat-icon green" aria-hidden="true">✓</i></button>
+      <button type="button" class="onspace-stat" data-stat-action="entregue"><span>ENTREGUES</span><b data-count="entregues">00</b><i class="stat-icon gray" aria-hidden="true">▰</i></button>
+      <button type="button" class="onspace-stat" data-stat-action="urgente"><span>URGENTES</span><b data-count="urgentes">00</b><i class="stat-icon red" aria-hidden="true">ϟ</i></button>
+    </div>
     <div class="mlivre-visto-aviso" id="avisoMLivreVistoNormal" hidden><span>TODOS OS PEDIDOS M.LIVRE DESTA DATA ESTÃO PRONTOS.</span><button type="button" data-action="confirmar-visto-mlivre">CONFIRMAR VISTO</button></div>
     <div id="formCardHome"><div class="card">
       <h2 id="tituloForm">LANÇAMENTO DE PEDIDOS</h2>
       <div class="mlivre-form-banner" id="mlivreFormBanner" hidden>LANÇAMENTO ESPECIAL M.LIVRE · PRODUÇÃO EM CAIXAS</div>
 
       <div class="grid">
-        <div class="campo" id="campoClienteFixado" hidden><label>Cliente</label><input type="text" value="M.LIVRE" readonly></div>
+        
         <div class="campo cliente-autocomplete" id="campoClienteNormal">
           <label for="clienteBusca" class="sr-only">Cliente *</label>
-          <input type="text" id="clienteBusca" autocomplete="off" placeholder="Cliente *" aria-autocomplete="list" aria-controls="sugestoesClientes" aria-expanded="false">
+          <input type="text" id="clienteBusca" autocomplete="off" placeholder="Cliente *" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="sugestoesClientes" aria-expanded="false">
           <div id="sugestoesClientes" class="cliente-sugestoes" role="listbox" hidden></div>
         </div>
 
@@ -193,11 +320,13 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
           <input type="time" id="entregaMLivreHora" aria-label="Hora limite de entrega">
         </div>
 
-        <div class="campo" id="campoUrgente">
-          <label>Urgência</label>
-          <label class="chk">
-            <input type="checkbox" id="urgente"> Pedido URGENTE
-          </label>
+        <div class="campo campo-urgencia" id="campoUrgente">
+          <label class="sr-only">Urgência</label>
+          <button type="button" class="urgente-toggle" id="urgenteBotao" aria-pressed="false">
+            <span class="urgente-icone" aria-hidden="true">!</span>
+            <span>P/URGENTE</span>
+          </button>
+          <input type="checkbox" id="urgente" class="sr-only" tabindex="-1" aria-hidden="true">
         </div>
 
       </div>
@@ -207,6 +336,7 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
         <button type="button" id="btnTipoEstribo" class="ativo">Estribo</button>
         <button type="button" id="btnTipoOutro">Outro material</button>
       </div>
+      <label id="campoMLivreEmbalagem" class="mlivre-embalar" hidden><span class="mlivre-casa" aria-hidden="true">⌂</span><input type="checkbox" id="mlivreEmbalar"><span>EMBALAR/ESCRITÓRIO</span></label>
       <div class="item-form">
         <div class="campo" id="campoMedida">
           <label for="itemMedida" class="sr-only">Medida</label>
@@ -216,7 +346,7 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
           <label for="itemMaterial" class="sr-only">Bitola (mm)</label>
           <input type="text" id="itemMaterial" aria-label="Bitola (mm)" inputmode="decimal" maxlength="3" placeholder="Bitola (mm)" autocomplete="off">
         </div>
-        <div class="campo" id="campoBitolaMLivre" hidden><label for="itemBitolaMLivre">Bitola (mm)</label><select id="itemBitolaMLivre" aria-label="Bitola M.LIVRE"><option value="4.2" selected>4,2 mm</option><option value="3.8">3,8 mm</option><option value="5.0">5,0 mm</option><option value="6.0">6,0 mm</option></select></div>
+        <div class="campo" id="campoBitolaMLivre" hidden><label for="itemBitolaMLivre" class="sr-only">Bitola (mm)</label><input type="text" id="itemBitolaMLivre" aria-label="Bitola M.LIVRE" inputmode="decimal" maxlength="3" value="4.2" placeholder="Bitola (mm)" autocomplete="off"></div>
         <div class="campo" id="campoOutroNome" hidden>
           <label for="itemOutroNome" class="sr-only">Material</label>
           <input type="text" id="itemOutroNome" placeholder="Nome do material" autocomplete="off">
@@ -231,16 +361,15 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
           <small id="ajudaMaterial" hidden></small>
           <button type="button" id="btnNaoCaixa" class="btn-nao-caixa" aria-pressed="false" hidden>NÃO É CAIXA</button>
         </div>
+        <div class="campo campo-anotacoes-salvar" id="campoAnotacoesPedido">
+          <label for="anotacoesCliente" class="sr-only">Anotações</label>
+          <textarea id="anotacoesCliente" placeholder="Anotações"></textarea>
+        </div>
         <button type="button" class="primario" id="btnAddItem">+ Adicionar</button>
       </div>
 
       <small id="ajudaCaixasMLivre" class="mlivre-caixa-nota" hidden>ADICIONE CADA CAIXA SEPARADAMENTE. A MEDIDA E A BITOLA FICAM SELECIONADAS; A QUANTIDADE PODE MUDAR EM CADA CAIXA.</small>
       <ul class="itens-temp" id="listaItensTemp"></ul>
-
-      <div class="campo campo-anotacoes-salvar">
-        <label for="anotacoesCliente" class="sr-only">Anotações</label>
-        <textarea id="anotacoesCliente" placeholder="Anotações"></textarea>
-      </div>
 
       <div class="acoes">
         <button type="button" class="primario" id="btnSalvar">LANÇAR</button>
@@ -252,7 +381,7 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
       <h2>Pedidos lançados</h2>
       <button type="button" class="sucesso" id="btnPDFGeral">Gerar PDF completo (sem entregues)</button>
     </div>
-    <div class="pedidos-filtros" aria-label="Filtros de pedidos">
+    <div class="pedidos-filtros" role="search" aria-label="Filtros de pedidos">
       <input id="filtroPedidosBusca" type="search" placeholder="Buscar cliente ou nº do pedido">
       <select id="filtroPedidosStatus" aria-label="Filtrar por status">
         <option value="todos">Todos os status</option>
@@ -293,6 +422,10 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
     <button type="button" id="cancelarExclusaoPedido">VOLTAR</button>
     <button type="button" class="perigo" id="confirmarExclusaoPedido">SIM, APAGAR</button>
   </div>
+</dialog>
+<dialog class="pedidos-status-dialog" id="pedidosStatusDialog" aria-labelledby="pedidosStatusTitulo">
+  <div class="pedidos-status-cabecalho"><h2 id="pedidosStatusTitulo">PEDIDOS</h2><button type="button" id="fecharPedidosStatus" aria-label="Fechar">×</button></div>
+  <div id="pedidosStatusConteudo"></div>
 </dialog>
 <dialog class="confirmar-dialog" id="confirmarEntregaDialog" aria-labelledby="tituloConfirmarEntrega">
   <h2 id="tituloConfirmarEntrega">CONFIRMAR ENTREGA</h2>
@@ -345,13 +478,15 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
       pretensaoEntrega:data.pretensaoEntrega || '',
       obs:data.obs || '',
       pronto:!!data.pronto,
+      producaoConfirmada:data.producaoConfirmada !== false,
+      producaoConfirmadaEm:data.producaoConfirmadaEm ?? null,
       prontoEm:data.prontoEm ?? null,
-      estribosProntos:Array.isArray(data.estribosProntos) ? data.estribosProntos : (data.itens || []).filter(item => item.tipo !== 'outro').map(item => item.pronto === true || data.pronto === true),
+      estribosProntos:Array.isArray(data.estribosProntos) ? data.estribosProntos : (data.itens || []).filter(item => item.tipo !== 'outro' && item.tipo !== 'embalar').map(item => item.pronto === true || data.pronto === true),
       entregue:!!data.entregue,
       entregueEm:data.entregueEm ?? null,
       temEstribo:true,
       ...(data.mLivre === true ? {mLivre:true,entregaMLivre:data.entregaMLivre || ''} : {}),
-      itens:(data.itens || []).filter(item => item.tipo !== 'outro').map(item => ({
+      itens:(data.itens || []).filter(item => item.tipo !== 'outro' && item.tipo !== 'embalar').map(item => ({
         tipo:'estribo', medida:item.medida, material:item.material, qtd:item.qtd, pronto:item.pronto === true,
         ...(data.mLivre === true ? {caixaNumero:item.caixaNumero || 0} : {})
       }))
@@ -371,12 +506,12 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
             id:item.id,
             cliente:String(data.cliente || ''),
             itens:(() => { let n=0; return (Array.isArray(data.itens) ? data.itens : []).map(item => {
-              if (item?.tipo === 'outro') return item;
+              if (item?.tipo === 'outro' || item?.tipo === 'embalar') return item;
               const prontoItem = Array.isArray(data.estribosProntos) ? data.estribosProntos[n] === true : item?.pronto === true;
               n++;
               return {...item, pronto:prontoItem || data.pronto === true};
             }); })(),
-            estribosProntos:Array.isArray(data.estribosProntos) ? data.estribosProntos : (Array.isArray(data.itens) ? data.itens.filter(item => item?.tipo !== 'outro').map(item => item?.pronto === true || data.pronto === true) : []),
+            estribosProntos:Array.isArray(data.estribosProntos) ? data.estribosProntos : (Array.isArray(data.itens) ? data.itens.filter(item => item?.tipo !== 'outro' && item?.tipo !== 'embalar').map(item => item?.pronto === true || data.pronto === true) : []),
             criadoEm:Number(data.criadoEm) || 0,
             atualizadoEm:Number(data.atualizadoEm) || 0,
             atualizadoPor:String(data.atualizadoPor || ''),
@@ -388,6 +523,7 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
             entregaMLivre:String(data.entregaMLivre || ''),
             mLivreVisto:data.mLivreVisto === true,
             pronto:data.pronto === true,
+            producaoConfirmada:data.producaoConfirmada !== false,
             entregue:data.entregue === true
           };
         };
@@ -493,10 +629,16 @@ const state = {
   usuario: null,
   filtroBusca: '',
   filtroStatus: 'todos',
-  mLivre: false
+  mLivre: false,
+  etapasFabricaAbertas: {},
+  etapasMLivreAbertas: {},
+  janelaTodosLancamentosAberta: true
 };
 
 const $ = s => document.querySelector(s);
+
+function ehItemDeEstribos(item){return !!item&&item.tipo!=='outro'&&item.tipo!=='embalar';}
+
 
 /* ============================================================
    UTILITÁRIOS
@@ -518,6 +660,11 @@ function gerarNumeroPedido(){
   const sufixo = String(agora.getTime()).slice(-6);
   return `EST-${data}-${sufixo}`;
 }
+function exibirNumeroPedido(numero){
+  const valor=String(numero||'');
+  const simples=valor.match(/^EST-\d{8}-(\d+)$/i);
+  return simples?`EST-${simples[1]}`:valor;
+}
 function nomeUsuarioAtual(){ return state.usuario?.email || state.usuario?.uid || 'Sistema'; }
 function registrarHistorico(historico, acao){
   const lista = Array.isArray(historico) ? historico.slice(-49) : [];
@@ -531,13 +678,14 @@ function statusPedido(p){
   return 'produzindo';
 }
 function filtrarPedidos(lista){
-  const busca = String(state.filtroBusca || '').trim().toLowerCase();
+  const normalizar = valor => String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');
+  const busca = normalizar(state.filtroBusca).trim();
   const status = state.filtroStatus || 'todos';
   return lista.filter(p => {
-    const texto = `${p.cliente || ''} ${p.numeroPedido || ''}`.toLowerCase();
+    const texto = normalizar(`${p.cliente || ''} ${p.numeroPedido || ''} ${p.id || ''}`);
     const statusCorresponde = status === 'todos'
       || statusPedido(p) === status
-      || (status === 'produzindo' && p.urgente && !p.pronto && !p.entregue);
+      || (status === 'produzindo' && !p.urgente && !p.pronto && !p.entregue);
     return (!busca || texto.includes(busca)) && statusCorresponde;
   });
 }
@@ -787,6 +935,7 @@ function definirAcesso(user){
   const abaInicial=state.role==='fabrica'?'fabrica':'pedidos';
   document.querySelectorAll('.app-tab[data-tab]').forEach(btn=>btn.classList.toggle('active',btn.dataset.tab===abaInicial));
   document.querySelectorAll('.tab-panel').forEach(panel=>panel.classList.toggle('active',panel.id==='tab-'+abaInicial));
+  atualizarCabecalhoFirebase();
   carregarClientes();
   atualizarClienteUI();
   atualizarDatalist();
@@ -835,10 +984,20 @@ function registrarCliente(nome){
    ============================================================ */
 function atualizarModoMLivre(){
  const m=state.mLivre;document.body.classList.toggle('modo-mlivre',m);
- $('#mlivreFormBanner').hidden=!m;$('#campoEntregaNormal').hidden=m;$('#campoLimiteHora').hidden=!m;$('#campoClienteFixado').hidden=!m;$('#campoClienteNormal').hidden=m;$('#clienteBusca').disabled=m;$('#btnTipoOutro').disabled=m;$('#urgente').disabled=m;$('#dataEntradaPedido').disabled=m;$('#ajudaCaixasMLivre').hidden=!m;
- if(m){if(state.tipoItemAtual!=='estribo')selecionarTipoItem('estribo');state.clienteAtual='M.LIVRE';$('#clienteBusca').value='M.LIVRE';$('#tituloForm').textContent='LANÇAMENTO M.LIVRE';$('#itensTitulo').textContent='ESTRIBOS · ADICIONE CADA CAIXA';$('#anotacoesCliente').placeholder='Observação (opcional)';$('#labelQtdItem').textContent='Quantidade de estribos nesta caixa';$('#itemQtd').placeholder='Quantidade de estribos nesta caixa';$('#btnAddItem').textContent=state.itemEditandoIndex===null?'+ CAIXA':'ATUALIZAR CAIXA';}
+ $('#mlivreFormBanner').hidden=!m;$('#campoEntregaNormal').hidden=m;$('#campoLimiteHora').hidden=!m;$('#campoMLivreEmbalagem').hidden=!m;$('#campoClienteNormal').hidden=m;$('#clienteBusca').disabled=m;$('#btnTipoOutro').disabled=m;$('#urgente').disabled=m;$('#dataEntradaPedido').disabled=m;$('#ajudaCaixasMLivre').hidden=!m;
+ if(m){if(state.tipoItemAtual!=='estribo')selecionarTipoItem('estribo');state.clienteAtual='M.LIVRE';$('#clienteBusca').value='M.LIVRE';$('#tituloForm').textContent='LANÇAMENTO M.LIVRE';$('#itensTitulo').textContent='ESTRIBOS · ADICIONE CADA CAIXA';$('#anotacoesCliente').placeholder='Observação (opcional)';$('#labelQtdItem').textContent=$('#mlivreEmbalar').checked?'Quantidade':'Quantidade de estribos nesta caixa';$('#itemQtd').placeholder=$('#mlivreEmbalar').checked?'Quantidade':'Quantidade de estribos nesta caixa';$('#btnAddItem').textContent=state.itemEditandoIndex===null?($('#mlivreEmbalar').checked?'+ ADICIONAR':'+ CAIXA'):'ATUALIZAR CAIXA';}
  else{$('#clienteBusca').disabled=false;$('#dataEntradaPedido').disabled=false;$('#tituloForm').textContent='LANÇAMENTO DE PEDIDOS';$('#itensTitulo').textContent='Itens do pedido';$('#anotacoesCliente').placeholder='Anotações';$('#labelQtdItem').textContent=state.tipoItemAtual==='estribo'?'Qtd. de peças':'Total de peças';$('#itemQtd').placeholder=state.tipoItemAtual==='estribo'?'Qtd. de peças':'Total de peças';$('#btnAddItem').textContent=state.itemEditandoIndex===null?'+ ADICIONAR':'ATUALIZAR ITEM';}
 }
+function alternarEmbalagemMLivre(){
+  if(!state.mLivre)return;
+  const on=$('#mlivreEmbalar').checked;
+  $('#itemMedida').placeholder=on?'Medida para embalar':'Medida';
+  $('#itemQtd').placeholder=on?'Quantidade':'Quantidade de estribos nesta caixa';
+  $('#labelQtdItem').textContent=on?'Quantidade':'Quantidade de estribos nesta caixa';
+  $('#btnAddItem').textContent=state.itemEditandoIndex===null?(on?'+ ADICIONAR':'+ CAIXA'):(on?'ATUALIZAR ITEM':'ATUALIZAR CAIXA');
+  document.querySelector('.mlivre-embalar')?.classList.toggle('ativo',on);
+}
+$('#mlivreEmbalar').addEventListener('change',alternarEmbalagemMLivre);
 function selecionarAba(tab,force=false){
  if(state.role==='lancamento'&&!['pedidos','mlivre'].includes(tab))return;
  if(state.role==='fabrica'&&!['fabrica','fabrica-mlivre'].includes(tab))return;
@@ -853,7 +1012,7 @@ function selecionarAba(tab,force=false){
  const card=$('#formCardHome').querySelector('.card')||$('#mlivreFormHost').querySelector('.card');
  if(tab==='mlivre'){
    const entering=!state.mLivre;state.mLivre=true;
-   if(entering&&!force){$('#dataEntradaPedido').value=dataLocalISO();$('#entregaMLivreHora').value='';$('#itemBitolaMLivre').value='4.2';$('#pretensaoEntrega').value='';$('#urgente').checked=false;}
+   if(entering&&!force){$('#dataEntradaPedido').value=dataLocalISO();$('#entregaMLivreHora').value='';$('#pretensaoEntrega').value='';$('#urgente').checked=false;}
    if(card)$('#mlivreFormHost').append(card);atualizarModoMLivre();
  }else if(tab==='pedidos'){
    if(card)$('#formCardHome').append(card);
@@ -864,6 +1023,16 @@ function selecionarAba(tab,force=false){
  if(tab==='fabrica')renderFabrica();if(tab==='fabrica-mlivre')renderFabricaMLivre();if(tab==='pedidos'||tab==='mlivre')renderListaPedidos();if(tab==='mlivre')$('#itemMedida').focus();
 }
 document.querySelectorAll('.app-tab[data-tab]').forEach(btn=>btn.addEventListener('click',()=>selecionarAba(btn.dataset.tab)));
+const nomesAbasFirebase={pedidos:'LANÇAMENTOS',fabrica:'FÁBRICA',mlivre:'LANÇAMENTO M.LIVRE','fabrica-mlivre':'FÁBRICA M.LIVRE'};
+function atualizarCabecalhoFirebase(){
+  const ativa=document.querySelector('.app-tab.active');
+  const breadcrumb=$('#firebaseBreadcrumb');
+  if(ativa&&breadcrumb)breadcrumb.textContent=nomesAbasFirebase[ativa.dataset.tab]||'LANÇAMENTOS';
+  const data=$('#firebaseDate');
+  if(data){const hoje=new Date();data.textContent=new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'short',year:'numeric'}).format(hoje).replace('.','').toUpperCase();}
+}
+document.addEventListener('click',event=>{if(event.target.closest('#firebasePdf'))$('#btnPDFGeral')?.click();if(event.target.closest('.app-tab[data-tab]'))setTimeout(atualizarCabecalhoFirebase,0);});
+
 
 /* ============================================================
    CLIENTE (AUTOCOMPLETE · OBRIGATÓRIO)
@@ -1059,6 +1228,17 @@ $('#btnNaoCaixa').addEventListener('click', () => {
 });
 
 function addItem(){
+  if(state.mLivre&&$('#mlivreEmbalar').checked){
+    const medida=$('#itemMedida').value.trim();
+    const material=String($('#itemBitolaMLivre').value||'').trim().replace(',','.');
+    const qtd=lerQuantidade($('#itemQtd').value);
+    if(!medida){alert('Informe a medida para embalar.');$('#itemMedida').focus();return;}
+    if(!MATERIAIS.includes(material)){alert('Informe uma bitola válida.');$('#itemBitolaMLivre').focus();return;}
+    if(!Number.isFinite(qtd)||qtd<=0||!Number.isInteger(qtd)){alert('Informe uma quantidade válida.');$('#itemQtd').focus();return;}
+    const itemNovo={tipo:'embalar',medida,material,qtd,unidadeLancamento:'unidade',pronto:false};
+    if(state.itemEditandoIndex!==null)state.itens[state.itemEditandoIndex]=itemNovo;else state.itens.push(itemNovo);
+    state.itemEditandoIndex=null;$('#itemQtd').value='';$('#mlivreEmbalar').checked=false;alternarEmbalagemMLivre();$('#itemMedida').focus();renderItensTemp();return;
+  }
   if (state.tipoItemAtual === 'outro'){
     const nome = $('#itemOutroNome').value.trim();
     const tipoMaterial = tipoMaterialOutro(nome);
@@ -1120,7 +1300,11 @@ function addItem(){
   state.itemEditandoIndex=null;$('#btnAddItem').textContent='+ ADICIONAR';$('#itemMedida').value='';$('#itemMaterial').value='';$('#itemOutroNome').value='';$('#itemQtd').value='';$('#itemMedida').focus();renderItensTemp();
 }
 $('#btnAddItem').addEventListener('click', addItem);
-['itemMedida','itemQtd','itemOutroNome'].forEach(id => {
+$('#itemQtd').addEventListener('keydown',e=>{
+  if(state.mLivre&&(e.key==='Enter'||(e.key==='Tab'&&!e.shiftKey))){e.preventDefault();$('#btnAddItem').focus();return;}
+  if(e.key==='Enter')addItem();
+});
+['itemMedida','itemOutroNome'].forEach(id => {
   $('#'+id).addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
 });
 
@@ -1130,10 +1314,10 @@ function renderItensTemp(){
   ul.innerHTML = state.itens.map((it, idx) => `
     <li>
       <span>
-        ${it.tipo === 'outro' ? `<span class="medida">${it.codigo ? `${esc(it.codigo)} · ${esc(it.medida)} · ${esc(it.bitola)}` : esc(it.material)}</span> · <b>${textoQtdOutro(it)}</b>` : `<span class="medida">${state.mLivre?`CAIXA ${it.caixaNumero||idx+1} · `:''}${esc(it.medida)}</span> · ${etiquetaBitola(it.material)} · <b>${fmtQtd(it.qtd)} ${state.mLivre?'estribos':'peças'}</b>`}
+        ${it.tipo === 'embalar' ? `<span class="medida">${esc(it.medida)} · ${etiquetaBitola(it.material)} · EMB./ESCR.</span> · <b>${fmtQtd(it.qtd)}</b>` : it.tipo === 'outro' ? `<span class="medida">${it.codigo ? `${esc(it.codigo)} · ${esc(it.medida)} · ${esc(it.bitola)}` : esc(it.material)}</span> · <b>${textoQtdOutro(it)}</b>` : `<span class="medida">${state.mLivre?'CAIXA · ':''}${esc(it.medida)}</span> · ${etiquetaBitola(it.material)} · <b>${fmtQtd(it.qtd)} ${state.mLivre?'estribos':'peças'}</b>`}
       </span>
       <span style="display:flex;gap:8px;align-items:center">
-        ${it.tipo === 'outro' ? '' : `<span class="pac">${state.mLivre?'1 CAIXA':`${pacotesDe(it.qtd)} pct`}</span>`}
+        ${it.tipo === 'outro' || it.tipo === 'embalar' ? '' : `<span class="pac">${state.mLivre?'1 CAIXA':`${pacotesDe(it.qtd)} pct`}</span>`}
         <button type="button" class="item-editar" data-edit="${idx}" aria-label="Editar item ${idx + 1}">EDITAR</button>
         <button type="button" class="item-apagar-x" data-del="${idx}" aria-label="Apagar item ${idx + 1}" title="Apagar">×</button>
       </span>
@@ -1156,7 +1340,8 @@ function editarItemTemporario(index){
   const item = state.itens[index];
   if (!item) return;
   state.itemEditandoIndex = index;
-  if (item.tipo === 'outro'){
+  if(item.tipo==='embalar'){ $('#mlivreEmbalar').checked=true;alternarEmbalagemMLivre();$('#itemMedida').value=item.medida||'';$('#itemBitolaMLivre').value=item.material||'4.2';$('#itemQtd').value=String(item.qtd);$('#itemMedida').focus(); }
+  else if (item.tipo === 'outro'){
     state.tipoItemAtual = 'outro';
     $('#itemOutroNome').value = item.codigo || item.material;
     $('#itemUnidadeBobina').value = item.unidade || 'un';
@@ -1185,7 +1370,7 @@ function cancelarEdicaoItemTemporario(){
   $('#itemQtd').value = '';
   $('#itemUnidadeBobina').value = 'un';
   atualizarRegraMaterial();
-  if(state.mLivre) $('#btnAddItem').textContent='+ CAIXA';
+  if(state.mLivre){$('#mlivreEmbalar').checked=false;alternarEmbalagemMLivre();$('#btnAddItem').textContent='+ CAIXA';}
 }
 
 /* ============================================================
@@ -1198,12 +1383,14 @@ function montarResumoConfirmacao(){
     ...(state.mLivre?[['HORA LIMITE DE ENTREGA',$('#entregaMLivreHora').value||'—'],['TIPO','LANÇAMENTO M.LIVRE · CAIXAS']]:[]),
     ...(!state.mLivre && $('#pretensaoEntrega').value ? [['ENTREGA PREVISTA', formatarDataISO($('#pretensaoEntrega').value)]] : []),
     ['URGÊNCIA', $('#urgente').checked ? 'SIM' : 'NÃO'],
-    ...(state.itens.some(i => i.tipo !== 'outro') ? [['STATUS', 'PRODUZINDO']] : [])
+    ...(state.itens.some(i => ehItemDeEstribos(i)) ? [['STATUS', 'PRODUZINDO']] : [])
   ];
   const itensHtml = state.itens.map((item, idx) => {
-    const detalhe = item.tipo === 'outro'
-      ? `${item.codigo ? `${esc(item.codigo)} — ${esc(item.medida)} — ${esc(item.bitola)} — ` : `${esc(item.material)} — `}${esc(textoQtdOutro(item))}`
-      : `${state.mLivre?`CAIXA ${item.caixaNumero||idx+1} — `:''}${esc(item.medida)} — ${esc(item.material)} mm — ${fmtQtd(item.qtd)} ${state.mLivre?'ESTRIBOS':'PEÇAS — '+pacotesDe(item.qtd)+' PACOTES'}`;
+    const detalhe = item.tipo === 'embalar'
+      ? `${esc(item.medida)} — ${esc(item.material)} mm — EMB./ESCR. — ${fmtQtd(item.qtd)}`
+      : item.tipo === 'outro'
+        ? `${item.codigo ? `${esc(item.codigo)} — ${esc(item.medida)} — ${esc(item.bitola)} — ` : `${esc(item.material)} — `}${esc(textoQtdOutro(item))}`
+        : `${state.mLivre?'CAIXA — ':''}${esc(item.medida)} — ${esc(item.material)} mm — ${fmtQtd(item.qtd)} ${state.mLivre?'ESTRIBOS':'PEÇAS — '+pacotesDe(item.qtd)+' PACOTES'}`;
     return `<div>${idx + 1}. ${detalhe}</div>`;
   }).join('');
   const anotacoes = $('#anotacoesCliente').value.trim();
@@ -1267,13 +1454,13 @@ async function confirmarESalvarLancamento(){
     : null;
 
   const itensSalvos = state.itens.map(i => ({...i}));
-  const somenteEstoque = itensSalvos.length > 0 && itensSalvos.every(i => i.tipo === 'outro');
-  const itensEstriboAntes = (pedidoAnterior?.itens || []).filter(i => i.tipo !== 'outro');
-  const itensEstriboDepois = itensSalvos.filter(i => i.tipo !== 'outro');
+  const somenteEstoque = itensSalvos.length > 0 && itensSalvos.every(i => i.tipo === 'outro' || i.tipo === 'embalar');
+  const itensEstriboAntes = (pedidoAnterior?.itens || []).filter(i => ehItemDeEstribos(i));
+  const itensEstriboDepois = itensSalvos.filter(i => ehItemDeEstribos(i));
   const mudouEstribos = JSON.stringify(itensEstriboAntes.map(({pronto,...item})=>item)) !== JSON.stringify(itensEstriboDepois.map(({pronto,...item})=>item));
   const estribosProntos = itensEstriboDepois.map((item,indice) => !mudouEstribos && (pedidoAnterior?.estribosProntos?.[indice] === true || (!Array.isArray(pedidoAnterior?.estribosProntos) && item.pronto === true)));
   let indiceEstriboSalvo = 0;
-  itensSalvos.forEach(item => { if (item.tipo !== 'outro') item.pronto = estribosProntos[indiceEstriboSalvo++] === true; });
+  itensSalvos.forEach(item => { if (ehItemDeEstribos(item)) item.pronto = estribosProntos[indiceEstriboSalvo++] === true; });
   const dataEntrada = $('#dataEntradaPedido').value;
   const pretensaoEntrega = state.mLivre ? '' : $('#pretensaoEntrega').value;
   const entregaMLivreHora=$('#entregaMLivreHora').value;
@@ -1303,6 +1490,7 @@ async function confirmarESalvarLancamento(){
     dataEntrada,
     pretensaoEntrega,
     urgente: state.mLivre ? false : $('#urgente').checked,
+    producaoConfirmada: pedidoAnterior ? pedidoAnterior.producaoConfirmada !== false : false,
     kg: pedidoAnterior ? (pedidoAnterior.kg || 0) : 0,
     obs: $('#anotacoesCliente').value.trim(),
     pronto: somenteEstoque || (itensEstriboDepois.length > 0 && estribosProntos.length === itensEstriboDepois.length && estribosProntos.every(Boolean)),
@@ -1344,7 +1532,7 @@ function limparFormulario(){
   selecionarTipoItem('estribo');
   $('#urgente').checked = false;
   $('#dataEntradaPedido').value = dataLocalISO();
-  $('#pretensaoEntrega').value='';$('#entregaMLivreHora').value='';$('#itemBitolaMLivre').value='4.2';
+  $('#pretensaoEntrega').value='';$('#entregaMLivreHora').value='';
   $('#anotacoesCliente').value = '';
   $('#itemMedida').value = '';
   $('#itemQtd').value = '';
@@ -1352,6 +1540,7 @@ function limparFormulario(){
   $('#itemOutroNome').value = '';
   $('#itemUnidadeBobina').value = 'un';
   state.naoCaixaArame = false;
+  if($('#mlivreEmbalar'))$('#mlivreEmbalar').checked=false;
   $('#btnCancelar').hidden = true;
   $('#btnSalvar').textContent = 'LANÇAR';
   state.mLivre=manterMLivre;
@@ -1371,6 +1560,7 @@ function editarPedido(id){
   if((state.itens.length||state.editandoId||$('#itemMedida').value.trim()||$('#itemQtd').value.trim())&&!confirm('Há um lançamento não salvo. Descartar?'))return;
   state.editandoId = id;
   state.mLivre=p.mLivre===true;
+  $('#mlivreEmbalar').checked=false;
   state.itemEditandoIndex = null;
   $('#btnAddItem').textContent = '+ ADICIONAR';
   state.clienteAtual = p.cliente;
@@ -1445,21 +1635,57 @@ $('#limparFiltrosPedidos')?.addEventListener('click', () => {
   $('#filtroPedidosBusca').value = ''; $('#filtroPedidosStatus').value = 'todos'; render();
 });
 
+/* Resumo de status: somente pedidos comuns; M.LIVRE tem fila própria. */
+const statusDialog=$('#pedidosStatusDialog');
+$('#fecharPedidosStatus').addEventListener('click',()=>statusDialog.close());
+statusDialog.addEventListener('click',event=>{if(event.target===statusDialog)statusDialog.close();});
+function pedidosPorStatus(action){
+  return ordenar(state.pedidos.filter(p=>!p.mLivre&&(
+    action==='urgente'?p.urgente&&!p.entregue&&!p.pronto:
+    action==='entregue'?p.entregue:
+    action==='pronto'?p.pronto&&!p.entregue:
+    !p.pronto&&!p.entregue&&!p.urgente
+  )));
+}
+function desenharPedidoEmDialog(p,action){
+  const itens=Array.isArray(p.itens)?p.itens:[];
+  const rows=itens.map(i=>`<tr><td><b>${i.tipo==='embalar'?`${esc(i.medida)} · EMB./ESCR.`:i.tipo==='outro'?esc(infoTelaDoItem(i)?.medida||i.medida||'—'):esc(i.medida||'—')}</b></td><td>${i.tipo==='outro'?(infoTelaDoItem(i)?`${esc(infoTelaDoItem(i).codigo)} · ${esc(infoTelaDoItem(i).bitola)}`:(i.codigo?`${esc(i.codigo)} · ${esc(i.bitola)}`:esc(i.material))):etiquetaBitola(i.material)}</td><td class="num">${i.tipo==='outro'?textoQtdOutro(i):fmtQtd(i.qtd)}</td><td class="num">${ehItemDeEstribos(i)?pacotesDe(i.qtd):''}</td></tr>`).join('');
+  const status=action==='entregue'?'ENTREGUE':action==='pronto'?'PRONTO':action==='urgente'?'URGENTE':p.producaoConfirmada===true?'PRODUZINDO':'AGUARDANDO INÍCIO';
+  return `<article class="pedido ${p.urgente?'urgente':p.pronto||p.entregue?'pronto':'produzindo'}"><div class="pedido-head"><div><span class="pedido-codigo">${esc(exibirNumeroPedido(p.numeroPedido||p.id||''))}</span><span class="pedido-cliente">${esc(p.cliente||'')}</span><span class="pedido-status ${p.pronto||p.entregue?'pronto':'produzindo'}">${status}</span></div><div class="pedido-datas"><div><b>ENTRADA:</b> ${formatarDataISO(dataEntradaDoPedido(p))}</div>${p.pretensaoEntrega?`<div><b>ENTREGA:</b> ${formatarDataISO(p.pretensaoEntrega)}</div>`:''}</div></div><table class="tabela"><thead><tr><th>MEDIDA</th><th>BITOLA / MATERIAL</th><th class="num">QUANTIDADE</th><th class="num">PACOTES</th></tr></thead><tbody>${rows}</tbody></table>${p.obs?`<div class="info-extra"><b>ANOTAÇÕES:</b> ${esc(p.obs)}</div>`:''}</article>`;
+}
+function abrirPedidosDoStatus(action){
+  const titles={produzindo:'EM PRODUÇÃO',pronto:'PEDIDOS PRONTOS',entregue:'PEDIDOS ENTREGUES',urgente:'PEDIDOS URGENTES'};
+  if(!titles[action])return;
+  const pedidos=pedidosPorStatus(action);
+  $('#pedidosStatusTitulo').textContent=titles[action];
+  $('#pedidosStatusConteudo').innerHTML=pedidos.length?pedidos.map(p=>desenharPedidoEmDialog(p,action)).join(''):'<div class="pedidos-status-vazio">NENHUM PEDIDO NESTA LISTA.</div>';
+  statusDialog.showModal();
+}
+$('#resumoPedidos').addEventListener('click',event=>{const card=event.target.closest('[data-stat-action]');if(card)abrirPedidosDoStatus(card.dataset.statAction);});
+function atualizarResumoPedidos(){
+  const comuns=state.pedidos.filter(p=>!p.mLivre);
+  const counts={produzindo:comuns.filter(p=>!p.entregue&&!p.pronto&&!p.urgente).length,prontos:comuns.filter(p=>!p.entregue&&p.pronto).length,entregues:comuns.filter(p=>p.entregue).length,urgentes:comuns.filter(p=>p.urgente&&!p.entregue&&!p.pronto).length};
+  document.querySelectorAll('#resumoPedidos [data-count]').forEach(el=>{el.textContent=String(counts[el.dataset.count]||0).padStart(2,'0');});
+  document.querySelector('#resumoPedidos [data-stat-action="urgente"]')?.classList.toggle('urgente-pendente',counts.urgentes>0);
+}
+
 /* ============================================================
    RENDER — ABA 1
    ============================================================ */
 function render(){
   if(state.role==='lancamento')renderListaPedidos();if(state.role==='fabrica')renderFabrica();if($('#tab-fabrica-mlivre').classList.contains('active'))renderFabricaMLivre();
-  atualizarAvisoFabricaMLivre();atualizarAvisoLancamentosMLivre();atualizarDatalist();
+  atualizarAvisoFabricaMLivre();atualizarAvisoFabricaUrgente();atualizarAvisoLancamentosMLivre();atualizarResumoPedidos();atualizarDatalist();
 }
 
-function gruposMLivreProntosNaoVistos(){const map=new Map();state.pedidos.filter(p=>p.mLivre===true).forEach(p=>{const d=dataEntradaDoPedido(p);if(!map.has(d))map.set(d,[]);map.get(d).push(p);});return [...map.entries()].filter(([,ps])=>ps.length&&ps.every(p=>p.pronto===true)&&ps.some(p=>p.mLivreVisto!==true || (Number(p.prontoEm)>0 && Number(p.mLivreVistoEm||0)<Number(p.prontoEm)))).map(([dia,pedidos])=>({dia,pedidos}));}
+function gruposMLivreProntosNaoVistos(){const map=new Map();state.pedidos.filter(p=>p.mLivre===true&&Array.isArray(p.itens)&&p.itens.some(i=>ehItemDeEstribos(i))).forEach(p=>{const d=dataEntradaDoPedido(p);if(!map.has(d))map.set(d,[]);map.get(d).push(p);});return [...map.entries()].filter(([,ps])=>ps.length&&ps.every(p=>p.pronto===true)&&ps.some(p=>p.mLivreVisto!==true || (Number(p.prontoEm)>0 && Number(p.mLivreVistoEm||0)<Number(p.prontoEm)))).map(([dia,pedidos])=>({dia,pedidos}));}
 function atualizarAvisoLancamentosMLivre(){const on=gruposMLivreProntosNaoVistos().length>0;document.querySelectorAll('.mlivre-visto-aviso').forEach(e=>e.hidden=!on);document.querySelectorAll('.app-tab[data-tab=mlivre]').forEach(b=>b.classList.toggle('mlivre-visto-pendente',on));}
 async function confirmarVistoMLivre(){const gs=gruposMLivreProntosNaoVistos();if(!gs.length){atualizarAvisoLancamentosMLivre();return;}const bs=[...document.querySelectorAll('[data-action=confirmar-visto-mlivre]')];bs.forEach(b=>b.disabled=true);try{const ps=gs.flatMap(g=>g.pedidos),ids=ps.map(p=>p.id),ts=Date.now();await Promise.all(ids.map(id=>window.firebaseApi.updateLaunchFields(id,{mLivreVisto:true,mLivreVistoEm:ts})));const set=new Set(ids);state.pedidos=state.pedidos.map(p=>set.has(p.id)?{...p,mLivreVisto:true,mLivreVistoEm:ts}:p);atualizarAvisoLancamentosMLivre();}catch(e){console.error('Falha ao confirmar aviso M.LIVRE visto:',e);alert('Não foi possível confirmar o aviso. Tente novamente.');}finally{bs.forEach(b=>b.disabled=false);}}
 document.querySelectorAll('.mlivre-visto-aviso [data-action=confirmar-visto-mlivre]').forEach(b=>b.addEventListener('click',confirmarVistoMLivre));
 
 function renderListaPedidos(){
   const ativos = $('#listaPedidos');
+  const janelaAnterior=ativos.querySelector('details[data-lancamento-todos]');
+  if(janelaAnterior)state.janelaTodosLancamentosAberta=janelaAnterior.open;
   const prontosCont = $('#pedidosProntosLista');
   const entreguesCont = $('#pedidosEntreguesLista');
   const ordenados=ordenar(state.pedidos),comuns=filtrarPedidos(ordenados.filter(p=>!p.mLivre)),especiales=ordenados.filter(p=>p.mLivre===true);
@@ -1471,31 +1697,31 @@ function renderListaPedidos(){
       <div class="pedido-head">
         <div>
           ${p.mLivre?'<span class="tag-mlivre">★ M.LIVRE · PRIORIDADE</span>':''}
-          ${p.numeroPedido ? `<span class="pedido-codigo">${esc(p.numeroPedido)}</span>` : ''}
+          ${p.numeroPedido ? `<span class="pedido-codigo">${esc(exibirNumeroPedido(p.numeroPedido))}</span>` : ''}
           <span class="pedido-cliente">${esc(p.cliente)}</span>
           ${p.urgente ? '<span class="tag-urgente">URGENTE</span>' : ''}
-          ${p.entregue ? '<span class="pedido-status pronto">ENTREGUE</span>' : (p.itens.some(i => i.tipo !== 'outro') ? `<span class="pedido-status ${p.pronto ? 'pronto' : 'produzindo'}">${p.pronto ? 'PRONTO' : 'PRODUZINDO'}</span>` : '')}
+          ${p.entregue ? '<span class="pedido-status pronto">ENTREGUE</span>' : (p.itens.some(i => ehItemDeEstribos(i)) ? `<span class="pedido-status ${p.pronto ? 'pronto' : 'produzindo'}">${p.pronto ? 'PRONTO' : 'PRODUZINDO'}</span>` : '')}
         </div>
         <div class="pedido-datas">
-          <div><b>Entrada:</b> ${formatarDataISO(dataEntradaDoPedido(p))}</div>
-          ${p.mLivre&&p.entregaMLivre?`<div><b>HORA LIMITE:</b> ${formatarDataISO(dataEntradaDoPedido(p))} · ${esc(p.entregaMLivre)}</div>`:(p.pretensaoEntrega?`<div><b>Entrega pretendida:</b> ${formatarDataISO(p.pretensaoEntrega)}</div>`:'')}
-          <div>Lançado em ${fmtData(p.criadoEm)}</div>
-          ${p.entregueEm ? `<div><b>Entregue em:</b> ${fmtData(p.entregueEm)}</div>` : ''}
+          <div><b>${p.mLivre?'HORA LIMITE':'Entrada:'}</b> ${p.mLivre&&p.entregaMLivre?esc(p.entregaMLivre):formatarDataISO(dataEntradaDoPedido(p))}</div>
+          ${!p.mLivre&&p.pretensaoEntrega?`<div><b>ENTREGA PRETENDIDA:</b> ${formatarDataISO(p.pretensaoEntrega)}</div>`:''}
+          <div>LANÇADO EM ${fmtData(p.criadoEm)}</div>
+          ${p.entregueEm ? `<div><b>ENTREGUE EM:</b> ${fmtData(p.entregueEm)}</div>` : ''}
         </div>
       </div>
       <table class="tabela">
         <thead><tr>
-          <th>${p.itens.some(i => i.tipo === 'outro') ? 'Medida / material' : 'Medida'}</th>
+          <th>${p.itens.some(i => i.tipo === 'outro' || i.tipo === 'embalar') ? 'Medida / material' : 'Medida'}</th>
           <th>Material</th>
-          <th class="num">${p.mLivre?'Estribos/caixa':(p.itens.some(i=>i.tipo==='outro')?'Quantidade':'Qtd. peças')}</th>
+          <th class="num">${p.mLivre?'Quantidade':(p.itens.some(i=>i.tipo==='outro')?'Quantidade':'Qtd. peças')}</th>
           ${p.mLivre?'':'<th class="num">Pacotes</th>'}
         </tr></thead>
         <tbody>${p.itens.map(i => `
           <tr>
-            <td><b>${i.tipo==='outro'?esc(infoTelaDoItem(i)?.medida||i.medida||'—'):(p.mLivre?`CAIXA ${i.caixaNumero||p.itens.indexOf(i)+1} · ${esc(i.medida)}`:esc(i.medida))}</b></td>
+            <td><b>${i.tipo==='embalar'?`${esc(i.medida)} · EMB./ESCR.`:i.tipo==='outro'?esc(infoTelaDoItem(i)?.medida||i.medida||'—'):(p.mLivre?`CAIXA · ${esc(i.medida)}`:esc(i.medida))}</b></td>
             <td>${i.tipo === 'outro' ? (infoTelaDoItem(i) ? `${esc(infoTelaDoItem(i).codigo)} · ${esc(infoTelaDoItem(i).bitola)}` : (i.codigo ? `${esc(i.codigo)} · ${esc(i.bitola)}` : esc(i.material))) : etiquetaBitola(i.material)}</td>
-            <td class="num">${i.tipo==='outro'?textoQtdOutro(i):`${fmtQtd(i.qtd)}${p.mLivre?' estribos':''}`}</td>
-            ${p.mLivre?'':`<td class="num">${i.tipo==='outro'?'':pacotesDe(i.qtd)}</td>`}
+            <td class="num">${i.tipo==='outro'?textoQtdOutro(i):`${fmtQtd(i.qtd)}${p.mLivre&&ehItemDeEstribos(i)?' estribos':''}`}</td>
+            ${p.mLivre?'':`<td class="num">${i.tipo==='outro'||i.tipo==='embalar'?'':pacotesDe(i.qtd)}</td>`}
           </tr>`).join('')}
         </tbody>
       </table>
@@ -1511,7 +1737,9 @@ function renderListaPedidos(){
       </div>
     </article>`;
 
-  ativos.innerHTML = ativosLista.length ? ativosLista.map(p => desenharPedido(p)).join('') : '<p class="vazio">Nenhum pedido em andamento.</p>';
+  const todosNaoEntregues=ordenar(state.pedidos.filter(p=>!p.entregue&&p.mLivre!==true));
+  const listaTodosNaoEntregues=todosNaoEntregues.length?todosNaoEntregues.map(p=>desenharPedido(p,p.pronto?'pronto':'normal')).join(''):'<p class="vazio">NENHUM PEDIDO PENDENTE.</p>';
+  ativos.innerHTML=`<details class="pedidos-arquivados janela-todos-lancamentos" data-lancamento-todos ${state.janelaTodosLancamentosAberta!==false?'open':''}><summary><span>TODOS OS PEDIDOS</span><span class="contador-pedidos">${todosNaoEntregues.length}</span></summary><div class="pedidos-arquivados-lista">${listaTodosNaoEntregues}</div></details>`;
   prontosCont.innerHTML = prontos.length ? prontos.map(p => desenharPedido(p,'pronto')).join('') : '<p class="vazio">Nenhum pedido pronto.</p>';
   entreguesCont.innerHTML = entregues.length ? entregues.map(p => desenharPedido(p,'entregue')).join('') : '<p class="vazio">Nenhum pedido entregue.</p>';
   $('#listaPedidosMLivre').innerHTML=ativosMLivre.length?ativosMLivre.map(p=>desenharPedido(p)).join(''):'<p class="vazio">Nenhum M.LIVRE em produção.</p>';$('#pedidosProntosMLivreLista').innerHTML=prontosMLivre.length?prontosMLivre.map(p=>desenharPedido(p,'pronto')).join(''):'<p class="vazio">Nenhum M.LIVRE pronto.</p>';$('#pedidosEntreguesMLivreLista').innerHTML=entreguesMLivre.length?entreguesMLivre.map(p=>desenharPedido(p,'entregue')).join(''):'<p class="vazio">Nenhum M.LIVRE entregue.</p>';$('#contadorMLivreAtivos').textContent=String(ativosMLivre.length);$('#contadorMLivreProntos').textContent=String(prontosMLivre.length);$('#contadorMLivreEntregues').textContent=String(entreguesMLivre.length);
@@ -1522,78 +1750,40 @@ function renderListaPedidos(){
    RENDER — ABA 2 (CHÃO DA FÁBRICA)
    ============================================================ */
 function renderFabrica(){
-  const pedidosDeFabrica = state.pedidos.filter(p => !p.mLivre && !p.entregue && p.itens.some(i => i.tipo !== 'outro'));
-  const emProducao = ordenar(pedidosDeFabrica.filter(p => !p.pronto));
+  document.querySelectorAll('#fabricaLista details[data-etapa-fabrica]').forEach(el=>{state.etapasFabricaAbertas[el.dataset.etapaFabrica]=el.open;});
+  const pedidosDeFabrica = state.pedidos.filter(p => !p.mLivre && !p.entregue && p.itens.some(i => ehItemDeEstribos(i)));
+  const urgentes = ordenar(pedidosDeFabrica.filter(p => p.urgente && !p.pronto));
+  const pedidosRegulares = pedidosDeFabrica.filter(p => !p.urgente);
+  const aguardando = ordenar(pedidosRegulares.filter(p => p.producaoConfirmada !== true && !p.pronto));
+  const emProducao = ordenar(pedidosRegulares.filter(p => p.producaoConfirmada === true && !p.pronto));
   const concluidos = ordenar(pedidosDeFabrica.filter(p => p.pronto));
   const cont = $('#fabricaLista');
 
-  const desenharPedidoFabrica = p => `
+  const desenharPedidoFabrica = (p, etapa) => {
+    const itens = p.itens.filter(i => ehItemDeEstribos(i));
+    const estribosProntos = p.estribosProntos || itens.map(i => i.pronto === true);
+    const todosMarcados = itens.length > 0 && estribosProntos.length === itens.length && estribosProntos.every(Boolean);
+    return `
     <article class="fabrica-card ${p.pronto ? 'pronto' : (p.urgente ? 'urgente' : '')}">
       <div class="fabrica-top">
-        <span class="fabrica-cliente">${esc(p.cliente)}</span>
-        <span>
-          ${p.urgente ? '<span class="tag-urgente">URGENTE</span>' : ''}
-          <span class="fabrica-status ${p.pronto ? 'pronto' : ''}">${p.pronto ? 'PRONTO' : 'PRODUZINDO'}</span>
-        </span>
+        <span class="fabrica-cliente">${p.numeroPedido ? `<span class="pedido-codigo">${esc(exibirNumeroPedido(p.numeroPedido))}</span>` : ''}${esc(p.cliente)}</span>
+        <span>${p.urgente ? '<span class="tag-urgente">URGENTE</span>' : ''}<span class="fabrica-status ${p.pronto ? 'pronto' : ''}">${etapa===1?'AGUARDANDO CONFIRMAÇÃO':etapa===2?'PRODUZINDO':'PEDIDO PRONTO'}</span></span>
       </div>
-      <div class="pedido-datas">
-        <div><b>Entrada:</b> ${formatarDataISO(dataEntradaDoPedido(p))}</div>
-        ${p.pretensaoEntrega ? `<div><b>Entrega pretendida:</b> ${formatarDataISO(p.pretensaoEntrega)}</div>` : ''}
-      </div>
+      <div class="pedido-datas"><div><b>ENTRADA:</b> ${formatarDataISO(dataEntradaDoPedido(p))}</div>${p.pretensaoEntrega ? `<div><b>ENTREGA PRETENDIDA:</b> ${formatarDataISO(p.pretensaoEntrega)}</div>` : ''}</div>
       ${p.obs ? `<div class="fabrica-obs"><b>Anotações:</b> ${esc(p.obs)}</div>` : ''}
-      <table class="tabela fabrica-tabela-estribos">
-        <thead><tr><th>Medida</th><th>Bitola</th><th class="num">Peças/pct</th><th class="confirma-col">Pronto</th></tr></thead>
-        <tbody>${p.itens.filter(i => i.tipo !== 'outro').map((i,indice) => `
-          <tr class="${i.pronto ? 'estribo-confirmado' : ''}"><td><b>${esc(i.medida)}</b></td><td>${etiquetaBitola(i.material)}</td><td class="num">${fmtQtd(i.qtd)} / <b>${pacotesDe(i.qtd)}</b></td><td class="confirma-col"><button type="button" class="btn-confirmar-estribo ${i.pronto ? 'confirmado' : ''}" data-action="item-status" data-id="${esc(p.id)}" data-item-index="${indice}" aria-label="${i.pronto ? 'Desmarcar estribo pronto' : 'Marcar estribo pronto'}" aria-pressed="${i.pronto ? 'true' : 'false'}" title="${i.pronto ? 'Pronto' : 'Marcar como pronto'}">${i.pronto ? '✓' : ''}</button></td></tr>`).join('')}
-        </tbody>
-      </table>
+      <table class="tabela fabrica-tabela-estribos"><thead><tr><th>Medida</th><th>Bitola</th><th class="num">Peças/pct</th>${etapa===2?'<th class="confirma-col">Pronto</th>':''}</tr></thead>
+        <tbody>${itens.map((i,indice)=>`<tr class="${i.pronto?'estribo-confirmado':''}"><td><b>${esc(i.medida)}</b></td><td>${etiquetaBitola(i.material)}</td><td class="num">${fmtQtd(i.qtd)} / <b>${pacotesDe(i.qtd)}</b></td>${etapa===2?`<td class="confirma-col"><button type="button" class="btn-confirmar-estribo ${estribosProntos[indice]?'confirmado':''}" data-action="item-status" data-id="${esc(p.id)}" data-item-index="${indice}" aria-label="${estribosProntos[indice]?'Desmarcar estribo pronto':'Marcar estribo pronto'}" aria-pressed="${estribosProntos[indice]?'true':'false'}" title="${estribosProntos[indice]?'Pronto':'Marcar como pronto'}">${estribosProntos[indice]?'✓':''}</button></td>`:''}</tr>`).join('')}</tbody></table>
       ${p.kg ? `<div class="fabrica-totais"><div><span>KG</span><strong>${fmtKg(p.kg)}</strong></div></div>` : ''}
-      <div class="fabrica-acoes fabrica-progresso">${p.pronto ? 'PEDIDO CONFIRMADO COMO PRONTO.' : ((p.estribosProntos || p.itens.filter(i => i.tipo !== 'outro').map(i => i.pronto === true)).length > 0 && (p.estribosProntos || p.itens.filter(i => i.tipo !== 'outro').map(i => i.pronto === true)).every(Boolean) ? `<button type="button" class="sucesso btn-confirmar-pedido-pronto" data-action="confirm-order-ready" data-id="${esc(p.id)}">CONFIRMAR PEDIDO PRONTO</button>` : 'MARQUE CADA ESTRIBO. QUANDO TODOS ESTIVEREM MARCADOS, CONFIRME O PEDIDO.')}</div>
+      <div class="fabrica-acoes fabrica-progresso">${etapa===1?`<button type="button" class="primario btn-confirmar-inicio" data-action="confirmar-inicio" data-id="${esc(p.id)}">CONFIRMAR PRODUZINDO</button>`:etapa===2?(p.pronto?'PEDIDO PRONTO.':todosMarcados?`<button type="button" class="sucesso btn-confirmar-pedido-pronto" data-action="confirm-order-ready" data-id="${esc(p.id)}">CONFIRMAR PEDIDO PRONTO</button>`:''):'PEDIDO CONCLUÍDO.'}</div>
     </article>`;
-
-  const desenharEtapa = (numero, titulo, lista) => `
-    <section class="etapa-fabrica">
-      <div class="etapa-fabrica-titulo">
-        <span class="etapa-numero">${numero}</span>
-        <h2>${titulo}</h2>
-        <span class="etapa-contador">${lista.length}</span>
-      </div>
-      <div class="etapa-fabrica-lista">
-        ${lista.length ? lista.map(desenharPedidoFabrica).join('') : '<p class="fabrica-vazio">Não há pedidos em produção.</p>'}
-      </div>
-    </section>`;
-
-  const urgentes = emProducao.filter(p => p.urgente);
-  const regulares = emProducao.filter(p => !p.urgente);
-  const listaEmProducao = regulares;
-  $('#fabricaResumo').innerHTML = `
-    <div class="resumo-box"><span>1 · PRODUZINDO</span><strong>${regulares.length}</strong></div>
-    <div class="resumo-box"><span>2 · URGENTES</span><strong>${urgentes.length}</strong></div>
-    <div class="resumo-box"><span>3 · PRONTO</span><strong>${concluidos.length}</strong></div>`;
-  const desenharUrgentes = lista => `
-    <section class="etapa-fabrica etapa-urgentes">
-      <div class="etapa-fabrica-titulo">
-        <span class="etapa-numero">2</span>
-        <h2>URGENTES</h2>
-        <span class="etapa-contador">${lista.length}</span>
-      </div>
-      <div class="etapa-fabrica-lista">
-        ${lista.length ? lista.map(desenharPedidoFabrica).join('') : '<p class="fabrica-vazio">NENHUM PEDIDO URGENTE.</p>'}
-      </div>
-    </section>`;
-  const prontoDetalhes = concluidos.length
-    ? concluidos.map(desenharPedidoFabrica).join('')
-    : '<p class="fabrica-vazio">AINDA NÃO HÁ PEDIDOS PRONTOS.</p>';
-  cont.innerHTML = `<div class="fabrica-etapas-verticais">
-    ${desenharEtapa('1','Produzindo',listaEmProducao)}
-    ${desenharUrgentes(urgentes)}
-    <details class="etapa-prontos-recolhida" ${state.prontosExpandidos ? 'open' : ''}>
-      <summary><span class="etapa-numero pronto-numero">3</span><span class="titulo-prontos">PRONTO</span><span class="etapa-contador">${concluidos.length}</span></summary>
-      <div class="etapa-fabrica-lista lista-prontos">${prontoDetalhes}</div>
-    </details>
-  </div>`;
-  const painelProntos = cont.querySelector('.etapa-prontos-recolhida');
-  if (painelProntos) painelProntos.addEventListener('toggle', () => { state.prontosExpandidos = painelProntos.open; });
+  };
+  const etapa=(numero,titulo,lista,n,empty)=>`<details class="fabrica-etapa-janela etapa-fabrica etapa-fabrica-${n}" data-etapa-fabrica="${n}" ${state.etapasFabricaAbertas[n]?'open':''}><summary><span class="etapa-numero">${numero}</span><strong>${titulo}</strong><span class="etapa-contador">${lista.length}</span><span class="etapa-abrir" aria-hidden="true">ABRIR</span></summary><div class="etapa-fabrica-lista">${lista.length?lista.map(p=>desenharPedidoFabrica(p,n)).join(''):`<p class="fabrica-vazio">${empty}</p>`}</div></details>`;
+  const subtituloEtapa=(numero,titulo,lista,n,empty)=>`<section class="fabrica-subetapa"><h3><span class="etapa-numero">${numero}</span><strong>${titulo}</strong><span class="etapa-contador">${lista.length}</span></h3><div class="etapa-fabrica-lista">${lista.length?lista.map(p=>desenharPedidoFabrica(p,n)).join(''):`<p class="fabrica-vazio">${empty}</p>`}</div></section>`;
+  const producaoAberta=state.etapasFabricaAbertas['1-2']||state.etapasFabricaAbertas['1']||state.etapasFabricaAbertas['2'];
+  const janelaProducao=`<details class="fabrica-etapa-janela etapa-fabrica etapa-fabrica-producao" data-etapa-fabrica="1-2" ${producaoAberta?'open':''}><summary><span class="etapa-numero">1–2</span><strong>PRODUÇÃO</strong><span class="etapa-contador">${aguardando.length+emProducao.length}</span><span class="etapa-abrir" aria-hidden="true">ABRIR</span></summary><div class="fabrica-producao-conteudo">${subtituloEtapa('1','CONFIRMAR PRODUZINDO',aguardando,1,'NENHUM PEDIDO AGUARDANDO INÍCIO.')}${subtituloEtapa('2','PRODUZINDO',emProducao,2,'NENHUM PEDIDO EM PRODUÇÃO.')}</div></details>`;
+  const urgentesHtml=urgentes.length?`<section class="fabrica-urgentes-fora"><h2><span class="tag-urgente">URGENTES</span><span class="etapa-contador">${urgentes.length}</span></h2><div class="etapa-fabrica-lista">${urgentes.map(p=>desenharPedidoFabrica(p,p.producaoConfirmada===true?2:1)).join('')}</div></section>`:'';
+  $('#fabricaResumo').innerHTML='';
+  cont.innerHTML=`${urgentesHtml}<div class="fabrica-etapas-verticais">${janelaProducao}${etapa('3','PEDIDO PRONTO',concluidos,3,'AINDA NÃO HÁ PEDIDOS PRONTOS.')}</div>`;
 }
 
 function tratarAcoesPedido(event){
@@ -1637,7 +1827,7 @@ async function registrarPedidoEntregue(id){
   if (!pedido || state.role !== 'lancamento' || !pedido.pronto || pedido.entregue) return;
   try{
     const atualizacao = {entregue:true,entregueEm:Date.now()};
-    await window.firebaseApi.updateStatus(id,atualizacao,pedido.itens.some(item => item.tipo !== 'outro'));
+    await window.firebaseApi.updateStatus(id,atualizacao,pedido.itens.some(item => ehItemDeEstribos(item)));
     state.pedidos = state.pedidos.map(item => item.id === id ? {...item,...atualizacao} : item);
     render();
     const painelProntos = $(pedido.mLivre ? '#janelaProntosMLivre' : '#janelaProntos');
@@ -1652,10 +1842,16 @@ async function registrarPedidoEntregue(id){
   }
 }
 
+async function confirmarInicioProducao(id){
+  const pedido=state.pedidos.find(item=>item.id===id);
+  if(!pedido||state.role!=='fabrica'||pedido.producaoConfirmada===true||pedido.pronto)return;
+  try{await window.firebaseApi.updateStatus(id,{producaoConfirmada:true,producaoConfirmadaEm:Date.now()});}
+  catch(error){console.error('Falha ao confirmar início da produção:',error);alert('Não foi possível confirmar o início da produção. Confira a conexão e as regras do Firestore.');}
+}
 async function confirmarEstriboPronto(id, indice){
   const pedido = state.pedidos.find(item => item.id === id);
-  if (!pedido || state.role !== 'fabrica') return;
-  const estribos = pedido.itens.filter(atual => atual.tipo !== 'outro');
+  if (!pedido || state.role !== 'fabrica' || pedido.producaoConfirmada === false || pedido.pronto) return;
+  const estribos = pedido.itens.filter(atual => ehItemDeEstribos(atual));
   if (!estribos[indice]) return;
   const estribosProntos = estribos.map((atual,i) => i === indice ? !Boolean(pedido.estribosProntos?.[i] ?? atual.pronto) : Boolean(pedido.estribosProntos?.[i] ?? atual.pronto));
   const retirarDePronto = pedido.pronto === true && !estribosProntos.every(Boolean);
@@ -1667,8 +1863,8 @@ async function confirmarEstriboPronto(id, indice){
 }
 async function confirmarPedidoPronto(id){
   const pedido = state.pedidos.find(item => item.id === id);
-  if (!pedido || state.role !== 'fabrica' || pedido.pronto) return;
-  const estribos = pedido.itens.filter(item => item.tipo !== 'outro');
+  if (!pedido || state.role !== 'fabrica' || pedido.producaoConfirmada === false || pedido.pronto) return;
+  const estribos = pedido.itens.filter(item => ehItemDeEstribos(item));
   const marcados = pedido.estribosProntos || estribos.map(item => item.pronto === true);
   if (!estribos.length || marcados.length !== estribos.length || !marcados.every(Boolean)) return;
   try{ await window.firebaseApi.updateStatus(id,{pronto:true,prontoEm:Date.now()}); }
@@ -1678,15 +1874,32 @@ async function confirmarPedidoPronto(id){
   }
 }
 
-function atualizarAvisoFabricaMLivre(){const n=state.pedidos.filter(p=>p.mLivre&&!p.entregue&&!p.pronto&&p.itens.some(i=>i.tipo!=='outro')).length;const b=$('#btnFabricaMLivre');b.classList.toggle('tem-pendentes',n>0);b.setAttribute('aria-label',n?`Fábrica M.LIVRE, ${n} pedido(s) aguardando produção`:'Fábrica M.LIVRE');}
-function renderFabricaMLivre(){
- const pend=ordenar(state.pedidos.filter(p=>p.mLivre&&!p.entregue&&!p.pronto&&p.itens.some(i=>i.tipo!=='outro'))),ready=ordenar(state.pedidos.filter(p=>p.mLivre&&!p.entregue&&p.pronto&&p.itens.some(i=>i.tipo!=='outro')));atualizarAvisoFabricaMLivre();
- const card=p=>`<article class="fabrica-card mlivre ${p.pronto?'pronto':''}"><div class="fabrica-top"><span><span class="tag-mlivre">★ M.LIVRE · PRIORIDADE</span><span class="fabrica-cliente">M.LIVRE</span></span><span class="fabrica-status ${p.pronto?'pronto':''}">${p.pronto?'PRONTO':'PRODUZINDO'}</span></div><div class="pedido-datas"><div><b>DATA DO PEDIDO:</b> ${formatarDataISO(dataEntradaDoPedido(p))}</div>${p.entregaMLivre?`<div><b>HORA LIMITE:</b> ${esc(p.entregaMLivre)}</div>`:''}</div>${p.obs?`<div class="fabrica-obs"><b>OBSERVAÇÃO:</b> ${esc(p.obs)}</div>`:''}<table class="tabela fabrica-tabela-estribos"><thead><tr><th>Medida</th><th>Bitola</th><th class="num">Caixa · estribos</th><th class="confirma-col">Pronto</th></tr></thead><tbody>${p.itens.filter(i=>i.tipo!=='outro').map((i,k)=>`<tr class="${i.pronto?'estribo-confirmado':''}"><td><b>${esc(i.medida)}</b></td><td>${etiquetaBitola(i.material)}</td><td class="num"><b>CAIXA ${i.caixaNumero||k+1} · ${fmtQtd(i.qtd)} PÇ</b></td><td class="confirma-col"><button type="button" class="btn-confirmar-estribo ${i.pronto?'confirmado':''}" data-action="item-status" data-id="${esc(p.id)}" data-item-index="${k}" aria-label="${i.pronto?'Desmarcar caixa pronta':'Marcar caixa pronta'}" aria-pressed="${i.pronto?'true':'false'}" title="${i.pronto?'Pronta':'Marcar caixa como pronta'}">${i.pronto?'✓':''}</button></td></tr>`).join('')}</tbody></table><div class="fabrica-acoes fabrica-progresso">${p.pronto?'TODAS AS CAIXAS DESTE PEDIDO ESTÃO PRONTAS.':((p.estribosProntos||p.itens.filter(i=>i.tipo!=='outro').map(i=>i.pronto===true)).every(Boolean)?`<button type="button" class="sucesso btn-confirmar-pedido-pronto" data-action="confirm-order-ready" data-id="${esc(p.id)}">CONFIRMAR PEDIDO PRONTO</button>`:'MARQUE CADA CAIXA. QUANDO TODAS ESTIVEREM MARCADAS, CONFIRME O PEDIDO.')}</div></article>`;
- const etapa=(title,list,num,empty)=>`<section class="etapa-fabrica"><div class="etapa-fabrica-titulo"><span class="etapa-numero">${num}</span><h2>${title}</h2><span class="etapa-contador">${list.length}</span></div><div class="etapa-fabrica-lista">${list.length?list.map(card).join(''):`<p class="fabrica-vazio">${empty}</p>`}</div></section>`;
- $('#fabricaMLivreJanela').innerHTML=`<div class="fabrica-resumo"><div class="resumo-box"><span>AGUARDANDO PRODUÇÃO</span><strong>${pend.length}</strong></div><div class="resumo-box"><span>PRONTOS</span><strong>${ready.length}</strong></div></div><div class="fabrica-etapas-verticais">${etapa('M.LIVRE · AGUARDANDO PRODUÇÃO',pend,'1','NENHUMA CAIXA M.LIVRE AGUARDANDO PRODUÇÃO.')}<details class="etapa-prontos-recolhida"><summary><span class="etapa-numero pronto-numero">2</span><span class="titulo-prontos">M.LIVRE · PRONTOS</span><span class="etapa-contador">${ready.length}</span></summary><div class="etapa-fabrica-lista lista-prontos">${ready.length?ready.map(card).join(''):'<p class="fabrica-vazio">AINDA NÃO HÁ PEDIDOS M.LIVRE PRONTOS.</p>'}</div></details></div>`;
+function atualizarAvisoFabricaMLivre(){const n=state.pedidos.filter(p=>p.mLivre&&!p.entregue&&!p.pronto&&p.itens.some(i=>ehItemDeEstribos(i))).length;const b=$('#btnFabricaMLivre');b.classList.toggle('tem-pendentes',n>0);b.setAttribute('aria-label',n?`Fábrica M.LIVRE, ${n} pedido(s) aguardando produção`:'Fábrica M.LIVRE');}
+function atualizarAvisoFabricaUrgente(){
+  const pendente=state.pedidos.some(p=>!p.mLivre&&p.urgente&&!p.entregue&&!p.pronto&&Array.isArray(p.itens)&&p.itens.some(i=>ehItemDeEstribos(i)));
+  const b=document.querySelector('.app-tab[data-tab="fabrica"]');
+  if(!b)return;
+  b.classList.toggle('urgente-pendente',pendente);
+  b.setAttribute('aria-label',pendente?'Fábrica: pedido urgente aguardando ficar pronto':'Fábrica');
 }
-
+function renderFabricaMLivre(){
+ const todos=state.pedidos.filter(p=>p&&(p.mLivre===true||String(p.cliente||'').trim().toUpperCase()==='M.LIVRE')&&!p.entregue&&Array.isArray(p.itens)&&p.itens.some(i=>i&&ehItemDeEstribos(i)));
+ const paraProduzir=ordenar(todos.filter(p=>!p.pronto));
+ const prontos=ordenar(todos.filter(p=>p.pronto));
+ const prontosPorData=new Map();
+ prontos.forEach(p=>{const data=dataEntradaDoPedido(p)||'SEM DATA';if(!prontosPorData.has(data))prontosPorData.set(data,[]);prontosPorData.get(data).push(p);});
+ atualizarAvisoFabricaMLivre();
+ const card=(p)=>{
+  const itens=p.itens.filter(i=>ehItemDeEstribos(i));
+  const flags=p.estribosProntos||itens.map(i=>i.pronto===true);
+  const confirmado=p.producaoConfirmada===true;
+  return `<article class="mlivre-producao-card"><div class="mlivre-producao-itens">${itens.map((i,k)=>`<div class="mlivre-producao-item"><span class="mlivre-producao-medida">${esc(i.medida)}</span><span class="mlivre-producao-bitola">${etiquetaBitola(i.material)}</span><span class="mlivre-producao-qtd">CAIXA · ${fmtQtd(i.qtd)} PÇ</span>${confirmado?`<button type="button" class="btn-confirmar-estribo ${flags[k]?'confirmado':''}" data-action="item-status" data-id="${esc(p.id)}" data-item-index="${k}" aria-label="${flags[k]?'DESMARCAR CAIXA PRONTA':'MARCAR CAIXA PRONTA'}" aria-pressed="${flags[k]?'true':'false'}">${flags[k]?'✓':''}</button>`:''}</div>`).join('')}</div><div class="mlivre-producao-acao">${!confirmado?`<button type="button" class="primario btn-confirmar-inicio" data-action="confirmar-inicio" data-id="${esc(p.id)}">CONFIRMAR PRODUZINDO</button>`:flags.length===itens.length&&flags.every(Boolean)?`<button type="button" class="sucesso btn-confirmar-pedido-pronto" data-action="confirm-order-ready" data-id="${esc(p.id)}">CONFIRMAR PEDIDO PRONTO</button>`:''}</div></article>`;
+ };
+ $('#fabricaMLivreJanela').innerHTML=`<div class="mlivre-prontos-canto"><details class="mlivre-prontos-janela"><summary>PRONTO</summary><div class="mlivre-prontos-conteudo">${prontos.length?[...prontosPorData.entries()].map(([data,pedidos])=>`<section class="mlivre-pronto-data"><h3>${data==='SEM DATA'?data:formatarDataISO(data)}</h3>${pedidos.map(p=>`<article class="mlivre-pronto-mini">${p.itens.filter(i=>ehItemDeEstribos(i)).map(i=>`<span>${esc(i.medida)} · ${etiquetaBitola(i.material)} · ${fmtQtd(i.qtd)} PÇ</span>`).join('')}</article>`).join('')}</section>`).join(''):'<p class="mlivre-pronto-vazio">NENHUM PEDIDO PRONTO.</p>'}</div></details></div><section class="mlivre-para-produzir"><h2>PARA PRODUZIR</h2>${paraProduzir.length?paraProduzir.map(card).join(''):'<p class="mlivre-pronto-vazio">NENHUM PEDIDO PARA PRODUZIR.</p>'}</section>`;
+}
 function tratarCliqueFabrica(event){
+  const inicio=event.target.closest('button[data-action="confirmar-inicio"][data-id]');
+  if(inicio){confirmarInicioProducao(inicio.dataset.id);return;}
   const botaoPedido = event.target.closest('button[data-action="confirm-order-ready"][data-id]');
   if (botaoPedido){ confirmarPedidoPronto(botaoPedido.dataset.id); return; }
   const itemBotao = event.target.closest('button[data-action="item-status"][data-id][data-item-index]');
@@ -1721,10 +1934,10 @@ function montarHTMLPDF(lista, titulo){
         <tbody>
           ${p.itens.map(i => `
             <tr>
-              <td>${i.tipo === 'outro' ? esc(infoTelaDoItem(i)?.medida || i.medida || '—') : esc(i.medida)}</td>
+              <td>${i.tipo==='embalar'?`${esc(i.medida)} · EMB./ESCR.`:i.tipo === 'outro' ? esc(infoTelaDoItem(i)?.medida || i.medida || '—') : esc(i.medida)}</td>
               <td>${i.tipo === 'outro' ? (infoTelaDoItem(i) ? `${esc(infoTelaDoItem(i).codigo)} · ${esc(infoTelaDoItem(i).bitola)}` : (i.codigo ? `${esc(i.codigo)} · ${esc(i.bitola)}` : esc(i.material))) : etiquetaBitola(i.material)}</td>
-              <td class="num">${i.tipo==='outro'?textoQtdOutro(i):(p.mLivre?`${fmtQtd(i.qtd)} ESTRIBOS`:fmtQtd(i.qtd))}</td>
-              <td class="num">${p.mLivre?(i.caixaNumero||1):(i.tipo!=='outro'?pacotesDe(i.qtd):'')}</td>
+              <td class="num">${i.tipo==='outro'?textoQtdOutro(i):(p.mLivre&&ehItemDeEstribos(i)?`${fmtQtd(i.qtd)} ESTRIBOS`:fmtQtd(i.qtd))}</td>
+              <td class="num">${p.mLivre?(ehItemDeEstribos(i)?'CAIXA':''):(ehItemDeEstribos(i)?pacotesDe(i.qtd):'')}</td>
               <td class="kg-celula"><span class="pdf-kg-linha">&nbsp;</span></td>
             </tr>`).join('')}
         </tbody>
@@ -1771,6 +1984,17 @@ function pdfPedido(id){
 $('#btnPDFGeral').addEventListener('click', () => {
   gerarPDF(ordenar(state.pedidos.filter(p => !p.entregue)), 'Relação Completa de Pedidos · Estribos');
 });
+$('#urgenteBotao')?.addEventListener('click',()=>{
+  const checkbox=$('#urgente');checkbox.checked=!checkbox.checked;
+  $('#urgenteBotao').classList.toggle('urgente-ativo',checkbox.checked);
+  $('#urgenteBotao').setAttribute('aria-pressed',String(checkbox.checked));
+  checkbox.dispatchEvent(new Event('change',{bubbles:true}));
+});
+$('#urgente')?.addEventListener('change',event=>{
+  $('#urgenteBotao')?.classList.toggle('urgente-ativo',event.target.checked);
+  $('#urgenteBotao')?.setAttribute('aria-pressed',String(event.target.checked));
+});
+
 
 /* ============================================================
    INICIALIZAÇÃO
