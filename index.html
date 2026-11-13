@@ -161,81 +161,61 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(180px,1.3fr) minmax(130
  .fabrica-progresso .btn-confirmar-pedido-pronto{width:min(100%,360px);min-height:44px;white-space:normal}
 }
 
-/* PAINEL DE RESUMO E CONSULTA DE STATUS */
-.onspace-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 16px}
-.onspace-stat{position:relative;display:block;min-width:0;width:100%;min-height:84px;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);text-align:left;cursor:pointer;box-shadow:var(--shadow)}
-.onspace-stat>span{display:block;font-size:10px;letter-spacing:.4px;font-weight:800;color:var(--muted)}
-.onspace-stat>b{display:block;margin-top:8px;font-size:24px;line-height:1.05}
-.stat-icon{position:absolute;right:12px;top:12px;width:25px;height:25px;border-radius:8px;display:grid;place-items:center;font-style:normal;font-size:13px}
-.stat-icon.amber{background:#fff7e7;color:#a96d05}.stat-icon.green{background:#eaf7f1;color:#198251}.stat-icon.gray{background:#f0f1f3;color:#687382}.stat-icon.red{background:#fff0f1;color:#be1428}
-.onspace-stat[data-stat-action="urgente"].urgente-pendente{border-color:#f3c8cc;background:#fffafa}
-.pedidos-status-dialog{position:fixed;inset:0;box-sizing:border-box;width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;padding:16px;border:0;border-radius:0;background:#f7f8fa;color:var(--ink);overflow:auto}
-.pedidos-status-dialog::backdrop{background:#10182888;backdrop-filter:blur(2px)}
-.pedidos-status-cabecalho{position:sticky;top:-16px;z-index:2;display:flex;justify-content:space-between;align-items:center;margin:-16px -16px 14px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--line)}
-.pedidos-status-cabecalho h2{margin:0;font-size:17px}
-#fecharPedidosStatus{width:38px;height:38px;padding:0;border:1px solid var(--line);border-radius:10px;background:#fff;color:#374151;font-size:25px;line-height:1}
-#pedidosStatusConteudo{width:min(1100px,100%);margin:0 auto}
-#pedidosStatusConteudo .pedido{margin-bottom:10px;background:#fff}
-.pedidos-status-vazio{padding:24px 12px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:12px}
-@media(max-width:899px){.onspace-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.onspace-stat{min-height:72px;padding:11px}.onspace-stat>span{font-size:9px}.onspace-stat>b{font-size:21px}.pedidos-status-dialog{padding:10px}.pedidos-status-cabecalho{top:-10px;margin:-10px -10px 10px;padding:9px 10px}}
-@media print{.onspace-stats,.pedidos-status-dialog{display:none!important}}
 
-/* PAINEL OPERACIONAL — adaptação do layout aprovado, sem controles de demonstração. */
-@media screen {
- :root{--bg:#f1f2f4;--ink:#1b2431;--muted:#657080;--line:#e3e5e9;--red:#be1428;--red-dark:#991125;--shadow:0 1px 2px rgba(20,28,40,.04)}
- html,body{background:#f1f2f4;color:#1b2431}
- .onspace-topbar{height:72px;position:fixed;z-index:45;top:0;left:232px;right:0;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:16px}
- .onspace-crumb{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.6px;color:#657080;font-weight:700}.onspace-crumb b{font-size:17px;color:#9aa2ad}.onspace-crumb strong{color:#1b2431}
- .onspace-top-actions{display:flex;align-items:center;gap:12px}.onspace-date{font-size:10px;color:#657080;white-space:nowrap}.onspace-pdf{height:40px;padding:0 14px;background:#fff;border:1px solid #e0e3e7;border-radius:10px;color:#26303d;font-size:10px;font-weight:800;white-space:nowrap}
- body.autenticado .topo{position:fixed;left:0;top:0;bottom:0;width:232px;z-index:50;display:flex;flex-direction:column;background:#fff;border-right:1px solid #e1e3e7;box-shadow:none}
- body.autenticado .topo-inner{width:100%;max-width:none;min-height:82px;padding:20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #e9eaed}
- body.autenticado .wordmark{font-size:17px!important;letter-spacing:-.4px!important}body.autenticado #btnSair{font-size:9px;padding:6px 8px;background:#fff}
- body.autenticado .tabs.app-tabs{width:100%;max-width:none;display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:22px 15px}
- body.autenticado .tabs.app-tabs:before{content:'PAINEL DE OPERAÇÃO';font-size:9px;letter-spacing:1.4px;font-weight:900;color:#687382;padding:8px 12px 11px}
- body.autenticado .app-tab{width:100%;min-width:0;text-align:left;padding:13px 12px!important;background:transparent;color:#586473;font-size:11px!important;line-height:1.3;font-weight:900;box-shadow:none;border-radius:10px}
- body.autenticado .app-tab.active{background:#fff0f2;color:#b9182c;box-shadow:none}
- body.autenticado main.wrap{max-width:none;margin:0 0 0 232px;padding:96px 28px 54px}
- body.autenticado #tab-pedidos.active{display:grid;grid-template-columns:minmax(290px,350px) minmax(0,1fr);align-items:start;column-gap:20px}
- body.autenticado #resumoPedidos{grid-column:1/-1;grid-row:1}
- body.autenticado #formCardHome{grid-column:1;grid-row:2 / span 6;min-width:0}
- body.autenticado #formCardHome .card{padding:18px;border:1px solid #e3e5e9;border-radius:13px;box-shadow:0 1px 2px #141c2806}
- body.autenticado #formCardHome .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
- body.autenticado #formCardHome .cliente-autocomplete{grid-column:1/-1}
- body.autenticado #formCardHome .item-form{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
- body.autenticado #formCardHome .item-form>button{grid-column:1/-1}
- body.autenticado #tab-pedidos>.secao-titulo,body.autenticado #tab-pedidos>.pedidos-filtros,body.autenticado #tab-pedidos>#listaPedidos,body.autenticado #tab-pedidos>#janelaProntos,body.autenticado #tab-pedidos>#janelaEntregues{grid-column:2;min-width:0}
- body.autenticado #tab-pedidos>.secao-titulo{grid-row:2;margin:0 0 9px;min-height:28px}body.autenticado #tab-pedidos>.secao-titulo h2{font-size:15px}body.autenticado #tab-pedidos>.secao-titulo #btnPDFGeral{display:none}
- body.autenticado #tab-pedidos>.pedidos-filtros{grid-row:3;display:grid;grid-template-columns:minmax(0,1fr) 155px auto;gap:7px;margin:0 0 12px;padding:10px;background:#fff;border:1px solid #e3e5e9;border-radius:11px}
- body.autenticado #tab-pedidos>.pedidos-filtros input,body.autenticado #tab-pedidos>.pedidos-filtros select{height:40px;min-height:40px;font-size:10px}
- body.autenticado #tab-pedidos>#listaPedidos{grid-row:4}
- body.autenticado #tab-pedidos>#janelaProntos{grid-row:5}body.autenticado #tab-pedidos>#janelaEntregues{grid-row:6}
- .pedido,.fabrica-card,.card,.pedidos-arquivados,.resumo-box{box-shadow:0 1px 2px #141c2806;border-color:#e3e5e9;border-radius:12px}
- .pedido{padding:14px}.pedido-cliente,.fabrica-cliente{color:#1b2431}
- .primario,.sucesso{background:#be1428;border-color:#be1428}.primario:hover,.sucesso:hover{background:#991125}
- #fabricaResumo{display:none!important}
-}
-@media(max-width:899px){
- .onspace-topbar{position:static;left:auto;right:auto;height:auto;min-height:52px;padding:8px 13px;flex-wrap:wrap}.onspace-crumb{font-size:8px;gap:6px}.onspace-top-actions{gap:7px}.onspace-date{font-size:8px}.onspace-pdf{height:33px;padding:0 9px;font-size:8px}
- body.autenticado .topo{position:sticky;top:0;width:auto;display:block;border-right:0;border-bottom:1px solid #e1e3e7}
- body.autenticado .topo-inner{min-height:56px;padding:10px 14px;max-width:none}
- body.autenticado .tabs.app-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:7px 10px}
- body.autenticado .app-tab{padding:9px 7px!important;text-align:center;font-size:10px!important}
- body.autenticado main.wrap{margin:0 auto;max-width:720px;padding:14px 12px 36px}
- body.autenticado #tab-pedidos.active{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
- body.autenticado #resumoPedidos,body.autenticado #formCardHome,body.autenticado #tab-pedidos>.secao-titulo,body.autenticado #tab-pedidos>.pedidos-filtros,body.autenticado #tab-pedidos>#listaPedidos,body.autenticado #tab-pedidos>#janelaProntos,body.autenticado #tab-pedidos>#janelaEntregues{grid-column:1;grid-row:auto}
- body.autenticado #resumoPedidos{margin-bottom:12px}body.autenticado #formCardHome{margin-bottom:13px}
- body.autenticado #tab-pedidos>.pedidos-filtros{grid-template-columns:1fr;margin-bottom:11px}
-}
-@media(max-width:400px){.onspace-date{display:none}.onspace-crumb{font-size:7px}.onspace-pdf{padding:0 7px}}
-@media print{.onspace-topbar{display:none!important}}
+/* Estilo pontual dos campos novos, preservando o layout Firebase original. */
+.mlivre-embalar{display:flex;align-items:center;gap:9px;width:max-content;max-width:100%;margin:0 0 12px;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#374151;font-size:13px;font-weight:700;cursor:pointer}
+.mlivre-embalar[hidden]{display:none!important}.mlivre-embalar input{width:17px;min-height:17px;height:17px;margin:0;accent-color:#be1428}.mlivre-embalar.ativo{border-color:#f3b1b8;background:#fff3f4;color:#a7192d}
+.campo-anotacoes-salvar{grid-column:1/-1;min-width:0}.campo-anotacoes-salvar textarea{min-height:58px;resize:vertical}
+@media(max-width:899px){.campo-anotacoes-salvar{grid-column:1/-1}}
 
-/* Approved urgent and M.LIVRE packing controls */
-.urgente-toggle{width:100%;display:flex!important;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:12px 16px;border:1px solid #e5e7eb;border-radius:14px;background:linear-gradient(180deg,#fff 0%,#f9fafb 100%);color:#596575;font-size:12px;font-weight:850;letter-spacing:.45px;cursor:pointer;box-shadow:0 2px 0 #e5e7eb,0 5px 12px rgba(31,41,55,.06);transition:transform .14s ease,box-shadow .14s ease,background .18s ease,color .18s ease,border-color .18s ease}.urgente-toggle:hover{border-color:#fecdd3;background:#fffafa;color:#9f172a}.urgente-toggle:active{transform:translateY(2px) scale(.99);box-shadow:0 0 0 #e5e7eb,inset 0 2px 5px rgba(31,41,55,.12)}.urgente-toggle.urgente-ativo{background:linear-gradient(180deg,#fff7f7 0%,#ffe9eb 100%);border-color:#f3b1b8;color:#ad1829;box-shadow:0 2px 0 #e9b7bc,0 5px 12px rgba(220,38,38,.10)}.urgente-toggle.urgente-ativo .urgente-icone{background:#fce3e6;color:#b42335}.urgente-toggle.urgente-ativo:active{transform:translateY(2px) scale(.99);box-shadow:0 0 0 #e9b7bc,inset 0 2px 5px rgba(160,20,40,.12)}.urgente-toggle:focus-visible{outline:2px solid #fecaca;outline-offset:2px}.urgente-toggle span{white-space:nowrap}.urgente-icone{display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:#f3f4f6;color:#7b8491;font-size:15px;font-weight:900;line-height:1}.mlivre-embalar{display:flex;align-items:center;gap:9px;width:max-content;max-width:100%;margin:0 0 12px;padding:9px 12px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;color:#4b5563;font-size:12px;font-weight:800;cursor:pointer}.mlivre-embalar[hidden]{display:none!important}.mlivre-embalar input{width:17px;min-height:17px;height:17px;margin:0;accent-color:#be1428}.mlivre-embalar.ativo{border-color:#f3b1b8;background:#fff3f4;color:#a7192d}.mlivre-casa{display:grid;place-items:center;width:23px;height:23px;border-radius:7px;background:#f3f4f6;color:#657080;font-size:17px;font-weight:900}.mlivre-embalar.ativo .mlivre-casa{background:#ffe1e5;color:#ad1829}.mlivre-embalar{grid-column:1/-1}.mlivre-embalar{position:relative;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;padding:12px 16px;border:1px solid #e5e7eb;border-radius:14px;background:linear-gradient(180deg,#fff 0%,#f9fafb 100%);color:#596575;font-size:12px;font-weight:850;letter-spacing:.45px;box-shadow:0 2px 0 #e5e7eb,0 5px 12px rgba(31,41,55,.06);transition:transform .14s ease,box-shadow .14s ease,background .18s ease,color .18s ease,border-color .18s ease}.mlivre-embalar:hover{border-color:#fecdd3;background:#fffafa;color:#9f172a}.mlivre-embalar:active{transform:translateY(2px) scale(.99);box-shadow:inset 0 2px 5px rgba(31,41,55,.12)}.mlivre-embalar input{position:absolute!important;width:1px!important;height:1px!important;min-height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;opacity:0!important}.mlivre-embalar:focus-within{outline:2px solid #fecaca;outline-offset:2px}.mlivre-embalar.ativo{border-color:#f3b1b8;background:linear-gradient(180deg,#fff7f7 0%,#ffe9eb 100%);color:#ad1829;box-shadow:0 2px 0 #e9b7bc,0 5px 12px rgba(220,38,38,.10)}.mlivre-embalar.ativo:active{transform:translateY(2px) scale(.99);box-shadow:inset 0 2px 5px rgba(160,20,40,.12)}.mlivre-casa{background:#f3f4f6;color:#7b8491}.mlivre-embalar.ativo .mlivre-casa{background:#fce3e6;color:#b42335}
-.campo-anotacoes-salvar{grid-column:1/-1;min-width:0}.campo-anotacoes-salvar textarea{min-height:64px;resize:vertical}
-.mlivre-embalar{grid-column:1/-1}
-body.modo-mlivre .item-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
-@media(max-width:899px){body.modo-mlivre .item-form{grid-template-columns:1fr 1fr}body.modo-mlivre #campoMedida,body.modo-mlivre #campoQtd,body.modo-mlivre #campoAnotacoesPedido,body.modo-mlivre #btnAddItem{grid-column:1/-1}}
-#btnFabricaMLivre.tem-pendentes.active{background:#fff0f2!important;color:#ad1829!important}
+/* Login desktop: destaque visual sem alterar o layout de celular ou o fluxo Firebase. */
+@media (min-width: 900px){
+  body:not(.autenticado) .login-panel{min-height:100vh;box-sizing:border-box;padding:34px;background:radial-gradient(ellipse at 18% 12%,#fce8eb 0,transparent 34%),linear-gradient(145deg,#f5f6f8 0%,#e9ebef 100%)}
+  body:not(.autenticado) .login-card{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.9fr);grid-template-rows:1fr auto 1fr;width:min(920px,calc(100vw - 80px));max-width:920px;min-height:440px;padding:0;overflow:hidden;border:1px solid #e1e4e9;border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(35,22,28,.16)}
+  body:not(.autenticado) .login-card::before{content:"";position:absolute;z-index:-1;inset:0 48% 0 0;background:radial-gradient(circle at 18% 20%,#ffffff30 0 2px,transparent 3px),radial-gradient(circle at 80% 78%,#ffffff22 0 3px,transparent 4px),linear-gradient(145deg,#c91e36 0%,#981329 58%,#71101f 100%);background-size:38px 38px,52px 52px,auto}
+  body:not(.autenticado) .login-card::after{content:"";position:absolute;z-index:-1;left:42%;top:-90px;width:180px;height:620px;transform:rotate(16deg);border-radius:100px;background:linear-gradient(180deg,#fff0 0%,#fff2 48%,#fff0 100%);pointer-events:none}
+  body:not(.autenticado) .login-card h1{grid-column:1;grid-row:1;align-self:end;margin:0;padding:0 44px;color:#fff;font-size:38px;line-height:1.08;letter-spacing:.3px;text-align:left}
+  body:not(.autenticado) .login-card h1 span{display:block;margin-top:5px;color:#ffe1e5}
+  body:not(.autenticado) .login-subtitulo{grid-column:1;grid-row:2;align-self:start;margin:12px 0 0;padding:0 44px;color:#ffe4e7;font-size:13px;letter-spacing:1.5px;text-align:left}
+  body:not(.autenticado) .login-card form{grid-column:2;grid-row:1/4;align-self:center;padding:46px 44px 42px}
+  body:not(.autenticado) .login-card form::before{content:"ACESSO AO SISTEMA";display:block;margin:0 0 24px;color:#202938;font-size:20px;font-weight:850;letter-spacing:.4px}
+  body:not(.autenticado) .login-card input:not([type="checkbox"]){height:52px;margin-bottom:15px;padding:0 15px;border:1px solid #d8dce3;border-radius:10px;background:#fbfcfd;font-size:15px;transition:border-color .18s,box-shadow .18s,background .18s}
+  body:not(.autenticado) .login-card input:not([type="checkbox"]):focus{border-color:#be1428;background:#fff;box-shadow:0 0 0 4px #be14281a;outline:none}
+  body:not(.autenticado) .login-senha-opcoes{margin-top:1px;color:#596575}
+  body:not(.autenticado) .login-card button{min-height:50px;margin-top:19px;border:0;border-radius:10px!important;background:linear-gradient(105deg,#c51b33,#9e1026);box-shadow:0 8px 18px #a1122929;color:#fff;font-size:15px;font-weight:800;letter-spacing:.3px;transition:transform .16s,box-shadow .16s,filter .16s}
+  body:not(.autenticado) .login-card button:not(:disabled):hover{transform:translateY(-1px);filter:brightness(1.04);box-shadow:0 11px 22px #a1122938}
+  body:not(.autenticado) .login-card button:disabled{opacity:.72;box-shadow:none}
+  body:not(.autenticado) .login-erro{padding:10px 12px;border:1px solid #fecaca;border-radius:9px;background:#fff1f2}
+}
+@media (min-width:900px) and (max-height:560px){
+  body:not(.autenticado) .login-panel{min-height:560px}
+  body:not(.autenticado) .login-card{min-height:400px}
+  body:not(.autenticado) .login-card form{padding-top:30px;padding-bottom:28px}
+}
+
+
+/* Login celular: cartão compacto, alinhado ao tema Arames Brasil do sistema. */
+@media screen and (max-width: 899px){
+  body:not(.autenticado) .login-panel{min-height:100vh;min-height:100svh;padding:22px 16px;background:#f3f4f6}
+  body:not(.autenticado) .login-card{position:relative;width:100%;max-width:440px;min-height:0;padding:26px 22px 24px;overflow:hidden;border:1px solid #e5e7eb;border-top:4px solid #be1428;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(31,41,55,.08)}
+  body:not(.autenticado) .login-card h1{margin:0;color:#1f2937;font-size:27px;line-height:1.08;letter-spacing:-.45px;text-align:center}
+  body:not(.autenticado) .login-card h1 span{color:#be1428}
+  body:not(.autenticado) .login-subtitulo{margin:7px 0 22px;color:#657080;font-size:11px;font-weight:800;letter-spacing:1px;text-align:center}
+  body:not(.autenticado) .login-card form{margin:0}
+  body:not(.autenticado) .login-card form::before{content:"ENTRAR NO SISTEMA";display:block;margin:0 0 16px;color:#374151;font-size:12px;font-weight:800;letter-spacing:.7px}
+  body:not(.autenticado) .login-card input:not([type="checkbox"]){height:48px;margin:0 0 12px;padding:0 13px;border:1px solid #d1d5db;border-radius:8px;background:#fff;font-size:16px}
+  body:not(.autenticado) .login-card input:not([type="checkbox"]):focus{border-color:#be1428;box-shadow:0 0 0 3px #be14281a;outline:none}
+  body:not(.autenticado) .login-senha-opcoes{margin-top:2px;color:#657080;font-size:13px}
+  body:not(.autenticado) .login-card button{min-height:47px;margin-top:17px;border:1px solid #be1428;border-radius:9px!important;background:#be1428;color:#fff;font-size:14px;font-weight:800;letter-spacing:.25px;box-shadow:0 2px 4px rgba(190,20,40,.15)}
+  body:not(.autenticado) .login-card button:not(:disabled):active{transform:translateY(1px);background:#991125}
+  body:not(.autenticado) .login-card button:disabled{opacity:.7;box-shadow:none}
+  body:not(.autenticado) .login-erro{margin-top:12px;padding:9px 11px;border:1px solid #fecaca;border-radius:8px;background:#fff7f7}
+}
+@media screen and (max-width: 380px){
+  body:not(.autenticado) .login-panel{padding:16px 12px}
+  body:not(.autenticado) .login-card{padding:23px 18px 20px}
+  body:not(.autenticado) .login-card h1{font-size:25px}
+}
 </style>
 </head>
 <body>
@@ -272,11 +252,6 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr) au
     <button class="app-tab" data-tab="fabrica-mlivre" id="btnFabricaMLivre" type="button">FÁBRICA M.LIVRE</button>
   </nav>
 </header>
-<div class="onspace-topbar" role="region" aria-label="Cabeçalho do sistema">
-  <div class="onspace-crumb"><span>GESTÃO DE PEDIDOS</span><b>›</b><strong id="firebaseBreadcrumb">LANÇAMENTOS</strong></div>
-  <div class="onspace-top-actions"><span class="onspace-date"><span aria-hidden="true">▦</span> <span id="firebaseDate"></span></span><button type="button" class="onspace-pdf" id="firebasePdf">⇩ &nbsp; EXPORTAR PDF</button></div>
-</div>
-
 <main class="wrap">
   <div class="notificacao-fabrica" role="status" aria-live="polite">
     <span id="estadoNotificacoes">Ative para receber avisos neste aparelho.</span>
@@ -287,12 +262,6 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr) au
   </div>
 <!-- ===================== ABA 1 ===================== -->
   <section id="tab-pedidos" class="tab-panel active">
-    <div class="onspace-stats" id="resumoPedidos" role="region" aria-label="Resumo dos pedidos">
-      <button type="button" class="onspace-stat" data-stat-action="produzindo"><span>EM PRODUÇÃO</span><b data-count="produzindo">00</b><i class="stat-icon amber" aria-hidden="true">▤</i></button>
-      <button type="button" class="onspace-stat" data-stat-action="pronto"><span>PRONTOS</span><b data-count="prontos">00</b><i class="stat-icon green" aria-hidden="true">✓</i></button>
-      <button type="button" class="onspace-stat" data-stat-action="entregue"><span>ENTREGUES</span><b data-count="entregues">00</b><i class="stat-icon gray" aria-hidden="true">▰</i></button>
-      <button type="button" class="onspace-stat" data-stat-action="urgente"><span>URGENTES</span><b data-count="urgentes">00</b><i class="stat-icon red" aria-hidden="true">ϟ</i></button>
-    </div>
     <div class="mlivre-visto-aviso" id="avisoMLivreVistoNormal" hidden><span>TODOS OS PEDIDOS M.LIVRE DESTA DATA ESTÃO PRONTOS.</span><button type="button" data-action="confirmar-visto-mlivre">CONFIRMAR VISTO</button></div>
     <div id="formCardHome"><div class="card">
       <h2 id="tituloForm">LANÇAMENTO DE PEDIDOS</h2>
@@ -320,13 +289,9 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr) au
           <input type="time" id="entregaMLivreHora" aria-label="Hora limite de entrega">
         </div>
 
-        <div class="campo campo-urgencia" id="campoUrgente">
-          <label class="sr-only">Urgência</label>
-          <button type="button" class="urgente-toggle" id="urgenteBotao" aria-pressed="false">
-            <span class="urgente-icone" aria-hidden="true">!</span>
-            <span>P/URGENTE</span>
-          </button>
-          <input type="checkbox" id="urgente" class="sr-only" tabindex="-1" aria-hidden="true">
+        <div class="campo" id="campoUrgente">
+          <label>Urgência</label>
+          <label class="chk"><input type="checkbox" id="urgente"> Pedido URGENTE</label>
         </div>
 
       </div>
@@ -422,10 +387,6 @@ body.modo-mlivre .item-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr) au
     <button type="button" id="cancelarExclusaoPedido">VOLTAR</button>
     <button type="button" class="perigo" id="confirmarExclusaoPedido">SIM, APAGAR</button>
   </div>
-</dialog>
-<dialog class="pedidos-status-dialog" id="pedidosStatusDialog" aria-labelledby="pedidosStatusTitulo">
-  <div class="pedidos-status-cabecalho"><h2 id="pedidosStatusTitulo">PEDIDOS</h2><button type="button" id="fecharPedidosStatus" aria-label="Fechar">×</button></div>
-  <div id="pedidosStatusConteudo"></div>
 </dialog>
 <dialog class="confirmar-dialog" id="confirmarEntregaDialog" aria-labelledby="tituloConfirmarEntrega">
   <h2 id="tituloConfirmarEntrega">CONFIRMAR ENTREGA</h2>
@@ -935,7 +896,6 @@ function definirAcesso(user){
   const abaInicial=state.role==='fabrica'?'fabrica':'pedidos';
   document.querySelectorAll('.app-tab[data-tab]').forEach(btn=>btn.classList.toggle('active',btn.dataset.tab===abaInicial));
   document.querySelectorAll('.tab-panel').forEach(panel=>panel.classList.toggle('active',panel.id==='tab-'+abaInicial));
-  atualizarCabecalhoFirebase();
   carregarClientes();
   atualizarClienteUI();
   atualizarDatalist();
@@ -1023,15 +983,6 @@ function selecionarAba(tab,force=false){
  if(tab==='fabrica')renderFabrica();if(tab==='fabrica-mlivre')renderFabricaMLivre();if(tab==='pedidos'||tab==='mlivre')renderListaPedidos();if(tab==='mlivre')$('#itemMedida').focus();
 }
 document.querySelectorAll('.app-tab[data-tab]').forEach(btn=>btn.addEventListener('click',()=>selecionarAba(btn.dataset.tab)));
-const nomesAbasFirebase={pedidos:'LANÇAMENTOS',fabrica:'FÁBRICA',mlivre:'LANÇAMENTO M.LIVRE','fabrica-mlivre':'FÁBRICA M.LIVRE'};
-function atualizarCabecalhoFirebase(){
-  const ativa=document.querySelector('.app-tab.active');
-  const breadcrumb=$('#firebaseBreadcrumb');
-  if(ativa&&breadcrumb)breadcrumb.textContent=nomesAbasFirebase[ativa.dataset.tab]||'LANÇAMENTOS';
-  const data=$('#firebaseDate');
-  if(data){const hoje=new Date();data.textContent=new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'short',year:'numeric'}).format(hoje).replace('.','').toUpperCase();}
-}
-document.addEventListener('click',event=>{if(event.target.closest('#firebasePdf'))$('#btnPDFGeral')?.click();if(event.target.closest('.app-tab[data-tab]'))setTimeout(atualizarCabecalhoFirebase,0);});
 
 
 /* ============================================================
@@ -1635,46 +1586,12 @@ $('#limparFiltrosPedidos')?.addEventListener('click', () => {
   $('#filtroPedidosBusca').value = ''; $('#filtroPedidosStatus').value = 'todos'; render();
 });
 
-/* Resumo de status: somente pedidos comuns; M.LIVRE tem fila própria. */
-const statusDialog=$('#pedidosStatusDialog');
-$('#fecharPedidosStatus').addEventListener('click',()=>statusDialog.close());
-statusDialog.addEventListener('click',event=>{if(event.target===statusDialog)statusDialog.close();});
-function pedidosPorStatus(action){
-  return ordenar(state.pedidos.filter(p=>!p.mLivre&&(
-    action==='urgente'?p.urgente&&!p.entregue&&!p.pronto:
-    action==='entregue'?p.entregue:
-    action==='pronto'?p.pronto&&!p.entregue:
-    !p.pronto&&!p.entregue&&!p.urgente
-  )));
-}
-function desenharPedidoEmDialog(p,action){
-  const itens=Array.isArray(p.itens)?p.itens:[];
-  const rows=itens.map(i=>`<tr><td><b>${i.tipo==='embalar'?`${esc(i.medida)} · EMB./ESCR.`:i.tipo==='outro'?esc(infoTelaDoItem(i)?.medida||i.medida||'—'):esc(i.medida||'—')}</b></td><td>${i.tipo==='outro'?(infoTelaDoItem(i)?`${esc(infoTelaDoItem(i).codigo)} · ${esc(infoTelaDoItem(i).bitola)}`:(i.codigo?`${esc(i.codigo)} · ${esc(i.bitola)}`:esc(i.material))):etiquetaBitola(i.material)}</td><td class="num">${i.tipo==='outro'?textoQtdOutro(i):fmtQtd(i.qtd)}</td><td class="num">${ehItemDeEstribos(i)?pacotesDe(i.qtd):''}</td></tr>`).join('');
-  const status=action==='entregue'?'ENTREGUE':action==='pronto'?'PRONTO':action==='urgente'?'URGENTE':p.producaoConfirmada===true?'PRODUZINDO':'AGUARDANDO INÍCIO';
-  return `<article class="pedido ${p.urgente?'urgente':p.pronto||p.entregue?'pronto':'produzindo'}"><div class="pedido-head"><div><span class="pedido-codigo">${esc(exibirNumeroPedido(p.numeroPedido||p.id||''))}</span><span class="pedido-cliente">${esc(p.cliente||'')}</span><span class="pedido-status ${p.pronto||p.entregue?'pronto':'produzindo'}">${status}</span></div><div class="pedido-datas"><div><b>ENTRADA:</b> ${formatarDataISO(dataEntradaDoPedido(p))}</div>${p.pretensaoEntrega?`<div><b>ENTREGA:</b> ${formatarDataISO(p.pretensaoEntrega)}</div>`:''}</div></div><table class="tabela"><thead><tr><th>MEDIDA</th><th>BITOLA / MATERIAL</th><th class="num">QUANTIDADE</th><th class="num">PACOTES</th></tr></thead><tbody>${rows}</tbody></table>${p.obs?`<div class="info-extra"><b>ANOTAÇÕES:</b> ${esc(p.obs)}</div>`:''}</article>`;
-}
-function abrirPedidosDoStatus(action){
-  const titles={produzindo:'EM PRODUÇÃO',pronto:'PEDIDOS PRONTOS',entregue:'PEDIDOS ENTREGUES',urgente:'PEDIDOS URGENTES'};
-  if(!titles[action])return;
-  const pedidos=pedidosPorStatus(action);
-  $('#pedidosStatusTitulo').textContent=titles[action];
-  $('#pedidosStatusConteudo').innerHTML=pedidos.length?pedidos.map(p=>desenharPedidoEmDialog(p,action)).join(''):'<div class="pedidos-status-vazio">NENHUM PEDIDO NESTA LISTA.</div>';
-  statusDialog.showModal();
-}
-$('#resumoPedidos').addEventListener('click',event=>{const card=event.target.closest('[data-stat-action]');if(card)abrirPedidosDoStatus(card.dataset.statAction);});
-function atualizarResumoPedidos(){
-  const comuns=state.pedidos.filter(p=>!p.mLivre);
-  const counts={produzindo:comuns.filter(p=>!p.entregue&&!p.pronto&&!p.urgente).length,prontos:comuns.filter(p=>!p.entregue&&p.pronto).length,entregues:comuns.filter(p=>p.entregue).length,urgentes:comuns.filter(p=>p.urgente&&!p.entregue&&!p.pronto).length};
-  document.querySelectorAll('#resumoPedidos [data-count]').forEach(el=>{el.textContent=String(counts[el.dataset.count]||0).padStart(2,'0');});
-  document.querySelector('#resumoPedidos [data-stat-action="urgente"]')?.classList.toggle('urgente-pendente',counts.urgentes>0);
-}
-
 /* ============================================================
    RENDER — ABA 1
    ============================================================ */
 function render(){
   if(state.role==='lancamento')renderListaPedidos();if(state.role==='fabrica')renderFabrica();if($('#tab-fabrica-mlivre').classList.contains('active'))renderFabricaMLivre();
-  atualizarAvisoFabricaMLivre();atualizarAvisoFabricaUrgente();atualizarAvisoLancamentosMLivre();atualizarResumoPedidos();atualizarDatalist();
+  atualizarAvisoFabricaMLivre();atualizarAvisoFabricaUrgente();atualizarAvisoLancamentosMLivre();atualizarDatalist();
 }
 
 function gruposMLivreProntosNaoVistos(){const map=new Map();state.pedidos.filter(p=>p.mLivre===true&&Array.isArray(p.itens)&&p.itens.some(i=>ehItemDeEstribos(i))).forEach(p=>{const d=dataEntradaDoPedido(p);if(!map.has(d))map.set(d,[]);map.get(d).push(p);});return [...map.entries()].filter(([,ps])=>ps.length&&ps.every(p=>p.pronto===true)&&ps.some(p=>p.mLivreVisto!==true || (Number(p.prontoEm)>0 && Number(p.mLivreVistoEm||0)<Number(p.prontoEm)))).map(([dia,pedidos])=>({dia,pedidos}));}
@@ -1983,16 +1900,6 @@ function pdfPedido(id){
 
 $('#btnPDFGeral').addEventListener('click', () => {
   gerarPDF(ordenar(state.pedidos.filter(p => !p.entregue)), 'Relação Completa de Pedidos · Estribos');
-});
-$('#urgenteBotao')?.addEventListener('click',()=>{
-  const checkbox=$('#urgente');checkbox.checked=!checkbox.checked;
-  $('#urgenteBotao').classList.toggle('urgente-ativo',checkbox.checked);
-  $('#urgenteBotao').setAttribute('aria-pressed',String(checkbox.checked));
-  checkbox.dispatchEvent(new Event('change',{bubbles:true}));
-});
-$('#urgente')?.addEventListener('change',event=>{
-  $('#urgenteBotao')?.classList.toggle('urgente-ativo',event.target.checked);
-  $('#urgenteBotao')?.setAttribute('aria-pressed',String(event.target.checked));
 });
 
 
