@@ -1,0 +1,65 @@
+name: Publicar exibicao sem abreviacoes
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publicar-sem-unidades.yml']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar versao aprovada
+        uses: actions/checkout@v4
+        with:
+          repository: nandolisboa/lancamento-novo001
+          ref: ba0bcc68f74fb100bcbf536958a4ee3763cdec52
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Aplicar edicoes e verificar copia
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root = Path('src/components')
+          for name in ['OrderCard', 'PrintSheet', 'OrderForm', 'Dialogs', 'FactoryView']:
+              p = root / (name + '.tsx')
+              text = p.read_text()
+              text = text.replace(')} pct', ')}')
+              text = text.replace("${emb === 'caixa' ? 'Cx' : 'Pct'} ", "${emb === 'caixa' ? 'Cx ' : ''}")
+              if name == 'FactoryView':
+                  text = text.replace(' pç`', '`')
+              if name == 'Dialogs':
+                  text = text.replace(' pç (', ' (')
+              if name == 'PrintSheet':
+                  text = text.replace("'Qtd (pç)'", "'Qtd'")
+              p.write_text(text)
+          PY
+          echo '9c510196f503ff87c9d8be0c7642a62eed789a3f1d9c757aa0dc33b8fc1ad416  src/components/OrderCard.tsx' | sha256sum -c
+          echo 'e4d054619628f56fc809e2559428dddd86a57bd019e7c17b228943636d248755  src/components/PrintSheet.tsx' | sha256sum -c
+          echo '8c8a301fd46a9c76e9c1e40402e68041a667de3ea29295257e458162d4be4a11  src/components/OrderForm.tsx' | sha256sum -c
+          echo '40f0f0214bf16cd9f02e4110ffec3865d669bfa41e11f74d111b769f3434bdc9  src/components/Dialogs.tsx' | sha256sum -c
+          echo 'f481f033e4715049c986c3ec1b0bedd10643df1fb0dfb002a2c2b76b429bfe8d  src/components/FactoryView.tsx' | sha256sum -c
+      - name: Corrigir caminho da logo
+        run: sed -i 's|src="/logo-arames.png"|src={`${import.meta.env.BASE_URL}logo-arames.png`}|g' src/components/LoginScreen.tsx
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+      - run: bun run build --base /controle-pedidos-estribos-/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
