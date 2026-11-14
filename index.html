@@ -535,7 +535,7 @@ body.autenticado #tab-pedidos.active{display:grid;grid-template-columns:minmax(0
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js';
   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js';
-  import { getFirestore, collection, doc, onSnapshot, runTransaction, writeBatch } from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js';
+  import { getFirestore, collection, doc, onSnapshot, writeBatch } from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js';
 
   const firebaseConfig = {
     apiKey: 'AIzaSyA4mosOkYxtWopiqADZbSisL-c0n7DzeVU',
@@ -600,23 +600,17 @@ body.autenticado #tab-pedidos.active{display:grid;grid-template-columns:minmax(0
         },error);
       },
       addPedido:async(data,knownPedidos=[])=>{
-        const pedidosRef=collection(db,'pedidos');
-        const pedidoRef=doc(pedidosRef);
-        const counterRef=doc(db,'contadores','pedidos');
-        const knownMax=(knownPedidos||[]).reduce((max,p)=>{
+        const seq=(knownPedidos||[]).reduce((max,p)=>{
           const m=String(p?.numeroPedido||'').match(/^EST(\d+)$/i);return m?Math.max(max,Number(m[1])||0):max;
-        },0);
-        let seq=0;
-        await runTransaction(db,async tx=>{
-          const counter=await tx.get(counterRef);
-          seq=Math.max(Number(counter.exists()?counter.data().ultimoNumero:0)||0,knownMax)+1;
-          const numeroPedido='EST'+String(seq).padStart(5,'0');
-          const payload={...data,numeroPedido};
-          tx.set(counterRef,{ultimoNumero:seq,atualizadoEm:Date.now()});
-          tx.set(pedidoRef,payload);
-          if(payload.temEstribo)tx.set(doc(db,'fabricaPedidos',pedidoRef.id),resumoFabrica(payload));
-        });
-        return {id:pedidoRef.id,numeroPedido:'EST'+String(seq).padStart(5,'0')};
+        },0)+1;
+        const numeroPedido='EST'+String(seq).padStart(5,'0');
+        const pedidoRef=doc(collection(db,'pedidos'));
+        const payload={...data,numeroPedido};
+        const batch=writeBatch(db);
+        batch.set(pedidoRef,payload);
+        if(payload.temEstribo)batch.set(doc(db,'fabricaPedidos',pedidoRef.id),resumoFabrica(payload));
+        await batch.commit();
+        return {id:pedidoRef.id,numeroPedido};
       },
       updateLaunchFields:async(id,data)=>{const batch=writeBatch(db);batch.update(doc(db,'pedidos',id),data);await batch.commit();},
       updatePedido:async(id,data)=>{
@@ -1495,7 +1489,8 @@ async function confirmarESalvarLancamento(){
     if (state.editandoId){
       await window.firebaseApi.updatePedido(state.editandoId, dados);
     } else {
-      await window.firebaseApi.addPedido({criadoEm:Date.now(), ...dados}, state.pedidos);
+      const salvo=await window.firebaseApi.addPedido({criadoEm:Date.now(), ...dados}, state.pedidos);
+      dados.numeroPedido=salvo.numeroPedido;
     }
     if(!state.mLivre)registrarCliente(state.clienteAtual);
     persistir();
