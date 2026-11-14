@@ -1,0 +1,58 @@
+name: Publicar controle com logo transparente
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publicar-controle-local.yml']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Conferir arquivos e preparar aplicacao
+        run: |
+          echo '5b56bf81db39f8ea63e8da693437bb327049027c8a01347b5367c4375d1bcdfe  controle-revisado-fonte.zip' | sha256sum -c
+          echo '170cbcaff6c095255c59b573dc55abbd3b91ad4b3cb9632b0a27361e04acb999  favicon.png' | sha256sum -c
+          mkdir app
+          unzip -q controle-revisado-fonte.zip -d app
+          cp favicon.png app/public/favicon.png
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/index.html')
+          s = p.read_text().replace('    <title>Arames Brasil — Controle de Pedidos</title>', '    <title>Arames Brasil — Controle de Pedidos</title>\n    <link rel="icon" type="image/png" href="%BASE_URL%favicon.png" />')
+          p.write_text(s)
+          p = Path('app/src/components/LoginScreen.tsx')
+          s = p.read_text().replace('src="/logo-arames.png"', 'src={`${import.meta.env.BASE_URL}logo-arames.png`}')
+          p.write_text(s)
+          PY
+      - name: Instalar dependencias
+        working-directory: app
+        run: bun install --frozen-lockfile
+      - name: Verificar codigo
+        working-directory: app
+        run: bun run lint
+      - name: Compilar
+        working-directory: app
+        run: bun run build --base /controle-pedidos-estribos-/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
