@@ -1,0 +1,23 @@
+name: Testar versao nova
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/testar-novo.yml']
+permissions:
+  contents: read
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar versao nova
+        uses: actions/checkout@v4
+        with:
+          repository: nandolisboa/lancamento-novo001
+          ref: ba0bcc68f74fb100bcbf536958a4ee3763cdec52
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+      - run: bun run build --base /controle-pedidos-estribos-/
