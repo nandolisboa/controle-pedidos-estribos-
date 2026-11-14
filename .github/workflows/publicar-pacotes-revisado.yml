@@ -1,0 +1,50 @@
+name: Publicar pacotes revisados
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publicar-pacotes-revisado.yml']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar versao aprovada
+        uses: actions/checkout@v4
+        with:
+          repository: nandolisboa/lancamento-novo001
+          ref: ba0bcc68f74fb100bcbf536958a4ee3763cdec52
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Aplicar alteracao e conferir arquivos
+        run: |
+          for f in OrderCard PrintSheet OrderForm Dialogs FactoryView; do sed -i 's/)} pct/)}/g' "src/components/$f.tsx"; done
+          echo '142c00a3469b2362627598bb60e8421640c758d54c6b602bab2dbd32a3da2a48  src/components/OrderCard.tsx' | sha256sum -c
+          echo '1aa9d9428c62991538958007ff61eb6021b41ba04335595320395a132e88b261  src/components/PrintSheet.tsx' | sha256sum -c
+          echo '8c8a301fd46a9c76e9c1e40402e68041a667de3ea29295257e458162d4be4a11  src/components/OrderForm.tsx' | sha256sum -c
+          echo '6f94f346b13946106622e26094a3838703766b1c931778540652f6f9c4f49dc0  src/components/Dialogs.tsx' | sha256sum -c
+          echo '8085d50ef7d7f12bcd720bf571e9e67dc8ab311e6b82b3374659161f190a11d7  src/components/FactoryView.tsx' | sha256sum -c
+      - name: Corrigir caminho da logo
+        run: sed -i 's|src="/logo-arames.png"|src={`${import.meta.env.BASE_URL}logo-arames.png`}|g' src/components/LoginScreen.tsx
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+      - run: bun run build --base /controle-pedidos-estribos-/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
