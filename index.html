@@ -321,6 +321,40 @@ body.autenticado #tab-pedidos.active{display:grid;grid-template-columns:minmax(0
  body:not(.autenticado) .login-card button{min-height:47px;margin-top:17px;border:1px solid #be1428;border-radius:9px!important;background:#be1428;color:#fff;font-size:14px;font-weight:800;letter-spacing:.25px}
 }
 @media(max-width:380px){body:not(.autenticado) .login-panel{padding:16px 12px}body:not(.autenticado) .login-card{padding:23px 18px 20px}body:not(.autenticado) .login-card h1{font-size:25px}}
+
+/* CORREÇÃO MOBILE: tabela dos pedidos não deve sobrepor cabeçalhos nem valores. */
+@media (max-width:600px){
+ .pedido{min-width:0!important;overflow:hidden!important}
+ .pedido table.tabela{display:table!important;width:100%!important;max-width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important}
+ .pedido table.tabela thead{display:table-header-group!important}
+ .pedido table.tabela tr{display:table-row!important}
+ .pedido table.tabela th,.pedido table.tabela td{display:table-cell!important;box-sizing:border-box!important;min-width:0!important;max-width:0!important;padding:7px 3px!important;white-space:normal!important;word-break:break-word!important;overflow-wrap:anywhere!important;overflow:hidden!important;line-height:1.25!important;vertical-align:middle!important}
+ .pedido table.tabela th{font-size:9px!important;letter-spacing:-.2px!important;text-align:left!important}
+ .pedido table.tabela td{font-size:12px!important}
+ .pedido table.tabela th:nth-child(1),.pedido table.tabela td:nth-child(1){width:26%!important;text-align:left!important}
+ .pedido table.tabela th:nth-child(2),.pedido table.tabela td:nth-child(2){width:23%!important;text-align:left!important}
+ .pedido table.tabela th:nth-child(3),.pedido table.tabela td:nth-child(3){width:31%!important;text-align:right!important}
+ .pedido table.tabela th:nth-child(4),.pedido table.tabela td:nth-child(4){width:20%!important;text-align:right!important}
+ .pedido table.tabela td .tag-bitola{display:inline!important;white-space:normal!important;overflow-wrap:anywhere!important;font-size:12px!important}
+}
+@media(max-width:380px){
+ .pedido table.tabela th,.pedido table.tabela td{padding-left:2px!important;padding-right:2px!important}
+ .pedido table.tabela th{font-size:8px!important}
+ .pedido table.tabela td{font-size:11px!important}
+}
+
+/* MOBILE TABLE FIX V2 — mantém cada rótulo junto ao próprio valor. */
+@media(max-width:600px){
+ .pedido table.tabela{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;border-collapse:separate!important;border-spacing:0!important;table-layout:auto!important}
+ .pedido table.tabela thead{display:none!important}
+ .pedido table.tabela tbody{display:block!important;width:100%!important}
+ .pedido table.tabela tr{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;width:100%!important;border-bottom:1px solid #eef0f2!important}
+ .pedido table.tabela td{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;min-width:0!important;max-width:none!important;width:auto!important;overflow:visible!important;white-space:normal!important;word-break:break-word!important;overflow-wrap:anywhere!important;padding:7px 5px!important;text-align:left!important;font-size:12px!important;line-height:1.25!important;border:0!important}
+ .pedido table.tabela td:before{content:attr(data-label);display:block;margin:0 0 3px;color:#657080;font-size:8px;font-weight:800;letter-spacing:.25px;line-height:1.1}
+ .pedido table.tabela td .tag-bitola{white-space:normal!important;overflow-wrap:anywhere!important;font-size:12px!important}
+ .pedido table.tabela td.num{text-align:left!important}
+}
+@media(max-width:380px){.pedido table.tabela td{padding:6px 3px!important;font-size:11px!important}.pedido table.tabela td:before{font-size:7px!important}}
 </style>
 </head>
 <body>
@@ -1699,10 +1733,10 @@ function renderListaPedidos(){
         </tr></thead>
         <tbody>${p.itens.map(i => `
           <tr>
-            <td><b>${i.tipo==='embalar'?`${esc(i.medida)} · EMB./ESCR.`:i.tipo==='outro'?esc(infoTelaDoItem(i)?.medida||i.medida||'—'):(p.mLivre?`CAIXA · ${esc(i.medida)}`:esc(i.medida))}</b></td>
-            <td>${i.tipo === 'outro' ? (infoTelaDoItem(i) ? `${esc(infoTelaDoItem(i).codigo)} · ${esc(infoTelaDoItem(i).bitola)}` : (i.codigo ? `${esc(i.codigo)} · ${esc(i.bitola)}` : esc(i.material))) : etiquetaBitola(i.material)}</td>
-            <td class="num">${i.tipo==='outro'?textoQtdOutro(i):`${fmtQtd(i.qtd)}${p.mLivre&&i.tipo==='estribo'?' estribos':''}`}</td>
-            ${p.mLivre?'':`<td class="num">${i.tipo==='outro'||i.tipo==='embalar'?'':pacotesDe(i.qtd)}</td>`}
+            <td data-label="MEDIDA"><b>${i.tipo==='embalar'?`${esc(i.medida)} · EMB./ESCR.`:i.tipo==='outro'?esc(infoTelaDoItem(i)?.medida||i.medida||'—'):(p.mLivre?`CAIXA · ${esc(i.medida)}`:esc(i.medida))}</b></td>
+            <td data-label="BITOLA / MATERIAL">${i.tipo === 'outro' ? (infoTelaDoItem(i) ? `${esc(infoTelaDoItem(i).codigo)} · ${esc(infoTelaDoItem(i).bitola)}` : (i.codigo ? `${esc(i.codigo)} · ${esc(i.bitola)}` : esc(i.material))) : etiquetaBitola(i.material)}</td>
+            <td class="num" data-label="${p.mLivre?'QUANTIDADE':(p.itens.some(x=>x.tipo==='outro')?'QUANTIDADE':'QTD. PEÇAS')}">${i.tipo==='outro'?textoQtdOutro(i):`${fmtQtd(i.qtd)}${p.mLivre&&i.tipo==='estribo'?' estribos':''}`}</td>
+            ${p.mLivre?'':`<td class="num" data-label="PACOTES">${i.tipo==='outro'||i.tipo==='embalar'?'':pacotesDe(i.qtd)}</td>`}
           </tr>`).join('')}
         </tbody>
       </table>
@@ -1993,5 +2027,26 @@ render();
 
 
 
+
+<script>
+/* Atualiza os cartões-resumo e a data depois de cada render e troca de aba. */
+(function(){
+ const labels={pedidos:'LANÇAMENTOS',fabrica:'FÁBRICA',mlivre:'LANÇAMENTO M.LIVRE','fabrica-mlivre':'FÁBRICA M.LIVRE'};
+ function updateSummary(){
+  const pedidos=(typeof state!=='undefined'&&Array.isArray(state.pedidos))?state.pedidos:[];
+  const active=document.querySelector('.app-tab.active');const tab=active?.dataset.tab||'pedidos';
+  const special=tab==='mlivre'||tab==='fabrica-mlivre';const list=pedidos.filter(p=>Boolean(p.mLivre)===special);
+  const counts={produzindo:list.filter(p=>!p.entregue&&!p.pronto&&!p.urgente).length,prontos:list.filter(p=>!p.entregue&&p.pronto).length,entregues:list.filter(p=>p.entregue).length,urgentes:list.filter(p=>p.urgente&&!p.entregue).length};
+  document.querySelectorAll('[data-onspace-stats]').forEach(box=>Object.keys(counts).forEach(k=>{const el=box.querySelector('[data-count="'+k+'"]');if(el)el.textContent=String(counts[k]).padStart(2,'0')}));
+  document.querySelectorAll('#tab-pedidos [data-stat-action="urgente"]').forEach(card=>card.classList.toggle('urgente-pendente',counts.urgentes>0));
+  const now=new Date(),time=document.getElementById('localDate');if(time){time.textContent=new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'short',year:'numeric'}).format(now).replace('.','').toUpperCase();time.dateTime=now.toISOString().slice(0,10)}
+  const crumb=document.getElementById('localBreadcrumb');if(active&&crumb)crumb.textContent=labels[active.dataset.tab]||'LANÇAMENTOS';
+ }
+ const original=window.render;
+ if(typeof original==='function')window.render=function(){const result=original.apply(this,arguments);updateSummary();return result};
+ document.addEventListener('click',e=>{if(e.target.closest('.app-tab'))setTimeout(updateSummary,0)});
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',updateSummary);else updateSummary();
+})();
+</script>
 </body>
 </html>
