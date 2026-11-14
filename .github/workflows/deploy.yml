@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nandolisboa/lancamento-novo-14-11
-          ref: bd9488c518c932bdb3919be7091f69f827636693
+          ref: main
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
