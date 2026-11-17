@@ -21,7 +21,7 @@ jobs:
           bun-version: latest
       - name: Conferir arquivos e preparar aplicacao
         run: |
-          echo '5b56bf81db39f8ea63e8da693437bb327049027c8a01347b5367c4375d1bcdfe  controle-revisado-fonte.zip' | sha256sum -c
+          echo '4e70ce8c248acd8cc060bd260a2ee1d3b3ea017424f00bd3898437de4f374a88  controle-revisado-fonte.zip' | sha256sum -c
           echo '170cbcaff6c095255c59b573dc55abbd3b91ad4b3cb9632b0a27361e04acb999  favicon.png' | sha256sum -c
           mkdir app
           unzip -q controle-revisado-fonte.zip -d app
