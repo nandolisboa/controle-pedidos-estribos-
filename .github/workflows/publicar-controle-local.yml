@@ -21,9 +21,9 @@ jobs:
           bun-version: latest
       - name: Conferir e preparar a fonte
         run: |
-          echo '0d704e8cb51e550c11f4b686c597a74a253dfc4d2e94b2c67b29da5345dcec63  conferencia-fonte.zip' | sha256sum -c
+          echo 'd54bdf3020eba78ac734231d621487d51b3b79c953cea7a2c89f38d73f51bd9f  peso-mlivre.zip' | sha256sum -c
           mkdir app
-          unzip -q conferencia-fonte.zip -d app
+          unzip -q peso-mlivre.zip -d app
       - name: Instalar dependencias
         working-directory: app
         run: bun install --frozen-lockfile
