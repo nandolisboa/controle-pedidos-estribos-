@@ -1,4 +1,4 @@
-name: Publicar controle com logo transparente
+name: Publicar controle de pedidos
 on:
   workflow_dispatch:
   push:
@@ -19,22 +19,11 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Conferir arquivos e preparar aplicacao
+      - name: Conferir e preparar a fonte
         run: |
-          echo 'f56415b0c1a0a3e98fb7138e49da4f7478f97a7f06a989193bf0fa910371307f  controle-revisado-fonte.zip' | sha256sum -c
-          echo '170cbcaff6c095255c59b573dc55abbd3b91ad4b3cb9632b0a27361e04acb999  favicon.png' | sha256sum -c
+          echo '0d704e8cb51e550c11f4b686c597a74a253dfc4d2e94b2c67b29da5345dcec63  conferencia-fonte.zip' | sha256sum -c
           mkdir app
-          unzip -q controle-revisado-fonte.zip -d app
-          cp favicon.png app/public/favicon.png
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path('app/index.html')
-          s = p.read_text().replace('    <title>Arames Brasil — Controle de Pedidos</title>', '    <title>Arames Brasil — Controle de Pedidos</title>\n    <link rel="icon" type="image/png" href="%BASE_URL%favicon.png" />')
-          p.write_text(s)
-          p = Path('app/src/components/LoginScreen.tsx')
-          s = p.read_text().replace('src="/logo-arames.png"', 'src={`${import.meta.env.BASE_URL}logo-arames.png`}')
-          p.write_text(s)
-          PY
+          unzip -q conferencia-fonte.zip -d app
       - name: Instalar dependencias
         working-directory: app
         run: bun install --frozen-lockfile
