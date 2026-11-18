@@ -1,0 +1,22 @@
+name: Testar conferencia sem publicar
+on:
+  push:
+    branches: [teste-conferencia-mlivre]
+    paths: ['conferencia-fonte.zip', '.github/workflows/teste-conferencia.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: mkdir app && unzip -q conferencia-fonte.zip -d app
+      - run: bun install --frozen-lockfile
+        working-directory: app
+      - run: bun run lint
+        working-directory: app
+      - run: bun run build --base /controle-pedidos-estribos-/
+        working-directory: app
