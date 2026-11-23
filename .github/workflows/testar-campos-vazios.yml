@@ -1,0 +1,30 @@
+name: Testar campos sem exemplos
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/testar-campos-vazios.yml']
+permissions:
+  contents: read
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Conferir fonte
+        run: |
+          echo '64f3652608c16a26cd5a97280e421a82f81f70d15f4c4d1c158648b09d1f6a0e  pedidos-sem-exemplos.zip' | sha256sum -c
+          mkdir app
+          unzip -q pedidos-sem-exemplos.zip -d app
+      - name: Instalar
+        working-directory: app
+        run: bun install --frozen-lockfile
+      - name: Verificar
+        working-directory: app
+        run: bun run lint
+      - name: Compilar
+        working-directory: app
+        run: bun run build --base /controle-pedidos-estribos-/
