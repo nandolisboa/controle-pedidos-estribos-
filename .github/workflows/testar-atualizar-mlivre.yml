@@ -1,0 +1,30 @@
+name: Testar botao atualizar M.Livre
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/testar-atualizar-mlivre.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Conferir e preparar fonte
+        run: |
+          echo '3fe17ca10f1defc92e81abb8946fa55bb8bb059a94a2ac9534fa8697cda3e976  pedidos-mlivre-atualizar-v2.zip' | sha256sum -c
+          mkdir app
+          unzip -q pedidos-mlivre-atualizar-v2.zip -d app
+      - name: Instalar dependencias
+        working-directory: app
+        run: bun install --frozen-lockfile
+      - name: Verificar codigo
+        working-directory: app
+        run: bun run lint
+      - name: Compilar
+        working-directory: app
+        run: bun run build --base /controle-pedidos-estribos-/
