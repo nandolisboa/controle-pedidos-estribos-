@@ -1,0 +1,47 @@
+name: Publicar impressao na producao
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publicar-imprimir-producao.yml']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Conferir e preparar fonte aprovada
+        run: |
+          echo 'ef1f72a1c4075a79992948f01b5976a3b395469877bddadf747f751292b3df92  pedidos-imprimir-producao-v6.zip' | sha256sum -c
+          mkdir app
+          unzip -q pedidos-imprimir-producao-v6.zip -d app
+      - name: Instalar dependencias
+        working-directory: app
+        run: bun install --frozen-lockfile
+      - name: Verificar codigo
+        working-directory: app
+        run: bun run lint
+      - name: Compilar
+        working-directory: app
+        run: bun run build --base /controle-pedidos-estribos-/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
