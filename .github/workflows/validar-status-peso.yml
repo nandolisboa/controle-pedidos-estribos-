@@ -1,0 +1,51 @@
+name: Validar status da produção e pesos dos estribos
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/validar-status-peso.yml']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Conferir e preparar fonte aprovada
+        run: |
+          echo 'cc63721deeb60680df1afdcc6e33d1e7b35b9891148947c36dcd140635ac2a8e  prontos-status-peso.zip' | sha256sum -c
+          mkdir app
+          unzip -q prontos-status-peso.zip -d app
+      - name: Instalar dependencias
+        working-directory: app
+        run: bun install --frozen-lockfile
+      - name: Verificar tipos
+        working-directory: app
+        run: bun run lint
+      - name: Testar status da producao
+        working-directory: app
+        run: |
+          bun -e '
+          import { estadoProducaoPedido } from "./src/utils.ts";
+          const make = (pronto, estribosProntos, itens) => ({ pronto, estribosProntos, itens });
+          const item = (pronto = false) => ({ tipo: "estribo", medida: "15 x 20", material: "4.2", qtd: 500, pronto });
+          const expected = make(false, [false, false], [item(), item()]);
+          const partial = make(false, [true, false], [item(true), item()]);
+          const ready = make(true, [true, true], [item(true), item(true)]);
+          const legacyPartial = make(false, undefined, [item(true), item(false)]);
+          if (estadoProducaoPedido(expected) !== "esperado") throw new Error("Esperado incorreto");
+          if (estadoProducaoPedido(partial) !== "produzindo") throw new Error("Produzindo incorreto");
+          if (estadoProducaoPedido(ready) !== "pronto") throw new Error("Pronto incorreto");
+          if (estadoProducaoPedido(legacyPartial) !== "produzindo") throw new Error("Compatibilidade com pedido antigo falhou");
+          '
+      - name: Compilar
+        working-directory: app
+        run: bun run build --base /controle-pedidos-estribos-/
