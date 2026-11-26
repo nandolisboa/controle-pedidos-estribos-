@@ -1,4 +1,4 @@
-name: Corrigir separação por data: somente M.Livre
+name: Corrigir separação por data somente no M.Livre
 on:
   workflow_dispatch:
   push:
