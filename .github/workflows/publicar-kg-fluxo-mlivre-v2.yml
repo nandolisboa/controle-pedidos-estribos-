@@ -1,0 +1,76 @@
+name: Publicar peso opcional como M.Livre
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publicar-kg-fluxo-mlivre-v2.yml']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Conferir e preparar fonte aprovada
+        run: |
+          echo '00b176e9c5a9192746c801b8266a716e6a745623562ee3be75e25e22615209e5  kg-opcional-fluxo-mlivre-v2.zip' | sha256sum -c
+          mkdir app
+          unzip -q kg-opcional-fluxo-mlivre-v2.zip -d app
+      - name: Instalar dependencias
+        working-directory: app
+        run: bun install --frozen-lockfile
+      - name: Verificar tipos
+        working-directory: app
+        run: bun run lint
+      - name: Verificar fluxo
+        working-directory: app
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          factory = Path('src/components/FactoryView.tsx').read_text()
+          app = Path('src/App.tsx').read_text()
+          order = Path('src/components/OrderCard.tsx').read_text()
+          assert 'Kg opcional' in factory and 'onSaveItemWeight' not in factory
+          assert '(!mLivreMode || allWeightsEntered)' in factory
+          assert 'pedido.mLivre ? String(itemIdx) : `f${itemIdx}`' in app
+          assert 'factoryWeightIndex' in order and 'Kg lançado' in order
+          PYCODE
+      - name: Testar status da producao
+        working-directory: app
+        run: |
+          bun -e '
+          import { estadoProducaoPedido } from "./src/utils.ts";
+          const make = (pronto, estribosProntos, itens) => ({ pronto, estribosProntos, itens });
+          const item = (pronto = false) => ({ tipo: "estribo", medida: "15 x 20", material: "4.2", qtd: 500, pronto });
+          const expected = make(false, [false, false], [item(), item()]);
+          const partial = make(false, [true, false], [item(true), item()]);
+          const ready = make(true, [true, true], [item(true), item(true)]);
+          const legacyPartial = make(false, undefined, [item(true), item(false)]);
+          if (estadoProducaoPedido(expected) !== "esperado") throw new Error("Esperado incorreto");
+          if (estadoProducaoPedido(partial) !== "produzindo") throw new Error("Produzindo incorreto");
+          if (estadoProducaoPedido(ready) !== "pronto") throw new Error("Pronto incorreto");
+          if (estadoProducaoPedido(legacyPartial) !== "produzindo") throw new Error("Compatibilidade com pedido antigo falhou");
+          '
+      - name: Compilar
+        working-directory: app
+        run: bun run build --base /controle-pedidos-estribos-/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
