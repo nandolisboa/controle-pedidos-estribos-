@@ -1,0 +1,58 @@
+name: Publicar prontos separados por dia
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publicar-prontos-dia.yml']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Conferir e preparar fonte
+        run: |
+          echo '5009c5d335be47f901fbc0c966a85d44dd22493b61511fe6fc760d6dd55405e9  prontos-por-dia-v3.zip' | sha256sum -c
+          mkdir app
+          unzip -q prontos-por-dia-v3.zip -d app
+      - name: Instalar dependencias
+        working-directory: app
+        run: bun install --frozen-lockfile
+      - name: Verificar codigo
+        working-directory: app
+        run: bun run lint
+      - name: Testar agrupamento por conclusao
+        working-directory: app
+        run: |
+          TZ=America/Sao_Paulo bun -e '
+          import { agruparProntosPorDia, dataPedidoPronto } from "./src/utils.ts";
+          const a = { id: "a", dataEntrada: "2026-11-23", criadoEm: 1, prontoEm: new Date("2026-11-25T14:00:00-03:00").getTime() };
+          const b = { id: "b", dataEntrada: "2026-11-23", criadoEm: 1, prontoEm: new Date("2026-11-26T14:00:00-03:00").getTime() };
+          const antigo = { id: "c", dataEntrada: "2026-11-24", criadoEm: 1, prontoEm: null };
+          const grupos = agruparProntosPorDia([a, b, antigo]);
+          if (dataPedidoPronto(a) !== "2026-11-25" || dataPedidoPronto(antigo) !== "2026-11-24" || grupos.map(([dia, ps]) => dia + ":" + ps.map(p => p.id).join(",")).join("|") !== "2026-11-26:b|2026-11-25:a|2026-11-24:c") throw new Error("Agrupamento incorreto");
+          '
+      - name: Compilar
+        working-directory: app
+        run: bun run build --base /controle-pedidos-estribos-/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
