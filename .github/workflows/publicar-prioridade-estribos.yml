@@ -1,0 +1,67 @@
+name: Publicar prioridades visuais dos estribos
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publicar-prioridade-estribos.yml']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Conferir pacote preparado e extrair
+        run: |
+          echo '4db517b9552dfa05ab50f50ed01c334a9173af9ce2a65249656505646e53ab6f  prioridade-estribos-aprovado-v2.zip' | sha256sum -c
+          mkdir app
+          unzip -q prioridade-estribos-aprovado-v2.zip -d app
+      - name: Instalar dependências
+        working-directory: app
+        run: bun install --frozen-lockfile
+      - name: Verificar tipos
+        working-directory: app
+        run: bun run lint
+      - name: Validar seleção, persistência e contorno
+        working-directory: app
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          types = Path('src/types.ts').read_text()
+          form = Path('src/components/OrderForm.tsx').read_text()
+          factory = Path('src/components/FactoryView.tsx').read_text()
+          assert 'prioridadeProducao?: boolean' in types
+          assert 'Começar por esta' in form and 'Prioridade marcada' in form
+          assert 'prioridadeProducao: itemEditIdx !== null' in form
+          assert 'item.prioridadeProducao === true' in factory
+          assert 'inset 0 0 0 2px #dc2626' in factory
+          assert 'factory-item-priorities-v1' not in factory
+          assert 'Star' not in factory
+          firebase = Path('src/firebase.ts').read_text()
+          order = Path('src/components/OrderCard.tsx').read_text()
+          assert 'i.prioridadeProducao === true ? { prioridadeProducao: true }' in firebase
+          assert 'item.prioridadeProducao === true' in order
+          PYCODE
+      - name: Compilar
+        working-directory: app
+        run: bun run build --base /controle-pedidos-estribos-/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
